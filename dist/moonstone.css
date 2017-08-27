@@ -1858,234 +1858,6 @@ html {
   opacity: 1;
 }
 
-/* Button */
-@-webkit-keyframes moonButtonExpand {
-  60% {
-    -webkit-transform: translateZ(0) scale(1.05);
-    transform: translateZ(0) scale(1.05);
-  }
-}
-@-webkit-keyframes moonButtonContract {
-  60% {
-    -webkit-transform: translateZ(0) scale(0.95238095);
-    transform: translateZ(0) scale(0.95238095);
-  }
-}
-@keyframes moonButtonExpand {
-  60% {
-    transform: translateZ(0) scale(1.05);
-  }
-}
-@keyframes moonButtonContract {
-  60% {
-    transform: translateZ(0) scale(0.95238095);
-  }
-}
-.moon-button {
-  position: relative;
-  overflow: visible;
-  height: 3.5rem;
-  line-height: 3rem;
-  border-radius: 416.625rem;
-  background-color: #4d4d4d;
-  border: 0.25rem solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-  display: inline-block;
-  width: auto;
-  min-width: 3.5rem;
-  max-width: 12.5rem;
-  padding: 0 1.125rem;
-  margin: 0 0.5rem;
-  color: #ccc;
-  box-sizing: border-box;
-  -webkit-transition: transform 0.2s ease-out;
-  -webkit-animation-duration: 0.2s;
-  -webkit-animation-iteration-count: 1;
-  -webkit-animation-timing-function: ease-out;
-  transition: transform 0.2s ease-out;
-  animation-duration: 0.2s;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-out;
-}
-.moon-button > * {
-  text-align: center;
-}
-.moon-button .moon-marquee {
-  width: 100%;
-  vertical-align: top;
-  text-align: center;
-}
-.moon-button:before {
-  content: none;
-}
-.moon-button .button-client {
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: inherit;
-  animation: inherit;
-}
-.moon-button.min-width {
-  min-width: 7.5rem;
-}
-.moon-button.small {
-  height: 2.5rem;
-  min-width: 2.5rem;
-  line-height: 2rem;
-  padding: 0 0.75rem;
-  position: relative;
-  overflow: visible;
-}
-.moon-button.small.min-width {
-  min-width: 5.5rem;
-}
-.moon-button.small:before {
-  content: '';
-  position: absolute;
-  top: -0.625rem;
-  right: -0.625rem;
-  bottom: -0.625rem;
-  left: -0.625rem;
-}
-.moon-button.translucent {
-  background-color: rgba(77, 77, 77, 0.3);
-}
-.moon-button.transparent {
-  background-color: transparent;
-}
-.moon-button:not([disabled]).pressed,
-.moon-button:not([disabled]).spotlight:active {
-  -webkit-animation-name: moonButtonExpand;
-  animation-name: moonButtonExpand;
-}
-.moon-button:not([disabled]).pressed:before,
-.moon-button:not([disabled]).spotlight:active:before,
-.moon-button:not([disabled]).pressed:after,
-.moon-button:not([disabled]).spotlight:active:after,
-.moon-button:not([disabled]).pressed .button-client,
-.moon-button:not([disabled]).spotlight:active .button-client {
-  -webkit-animation-name: moonButtonContract;
-  animation-name: moonButtonContract;
-}
-.moon-button:not([disabled]).spotlight {
-  background-color: #cf0652;
-  color: #fff;
-}
-.moon-button:not([disabled]).active {
-  border-color: #cf0652;
-}
-.moon-button:not([disabled]).active.spotlight {
-  border-color: #fff;
-  background-color: #cf0652;
-  color: #fff;
-}
-.moon-button[disabled] {
-  cursor: default;
-  opacity: 0.4;
-  filter: alpha(opacity=40);
-}
-.moon-neutral .moon-button {
-  color: #4d4d4d;
-  background-color: #fff;
-}
-.moon-neutral .moon-button * {
-  color: inherit;
-}
-.moon-neutral .moon-button[disabled] {
-  color: #4d4d4d;
-  background-color: #fff;
-}
-
-.moon-overlay {
-  position: relative;
-}
-.moon-overlay-component {
-  display: inline-block;
-  pointer-events: auto;
-}
-.moon-overlay-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  display: none;
-}
-.moon-overlay-container.position-top {
-  bottom: auto;
-}
-.moon-overlay-container.position-bottom {
-  top: auto;
-}
-.moon-overlay-container.position-left {
-  right: auto;
-}
-.moon-overlay-container.position-right {
-  left: auto;
-}
-.moon-overlay-container.align-right {
-  text-align: right;
-}
-.moon-overlay-container.align-left {
-  text-align: left;
-}
-.moon-overlay-container.transparent {
-  background-color: transparent;
-}
-.moon-overlay-container.centered .moon-overlay-component {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-50%);
-}
-.moon-overlay-container.moon-overlay-selection .moon-icon {
-  display: block;
-  border: 0.25rem solid black;
-  background-color: white;
-  color: transparent;
-  margin: 0;
-  border-radius: 50%;
-  position: relative;
-  opacity: 0.5;
-}
-.moon-overlay-container.moon-overlay-selection .moon-icon:not(.small) {
-  width: 2.5rem;
-  height: 2.5rem;
-  line-height: 2.5rem;
-}
-.selected .moon-overlay-container.moon-overlay-selection .moon-icon {
-  color: #cf0652;
-  border-color: #cf0652;
-  opacity: 1;
-}
-.moon-overlay-container.moon-overlay-text .moon-overlay-component {
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.25rem;
-}
-.moon-overlay-container.moon-overlay-text .moon-overlay-component .moon-overlay-text-title {
-  font-family: "MuseoSans 500";
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 0.125rem;
-}
-.moon-overlay-container.moon-overlay-text .moon-overlay-component .moon-overlay-text-subtitle {
-  font-family: "Moonstone Miso Bold";
-  font-size: 2rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-.spotlight .moon-overlay-container.show-on-spotlight,
-*:hover > .moon-overlay-container.show-on-hover,
-.selection-enabled .moon-overlay-container.moon-overlay-selection,
-.moon-overlay-container.show {
-  display: block;
-}
-
 /* Spinner.css */
 @-webkit-keyframes spinBall {
   0% {
@@ -2444,6 +2216,234 @@ html {
 .enyo-locale-right-to-left .moon-spinner.center.middle {
   -webkit-transform: translateX(50%) translateY(-50%);
   transform: translateX(50%) translateY(-50%);
+}
+
+/* Button */
+@-webkit-keyframes moonButtonExpand {
+  60% {
+    -webkit-transform: translateZ(0) scale(1.05);
+    transform: translateZ(0) scale(1.05);
+  }
+}
+@-webkit-keyframes moonButtonContract {
+  60% {
+    -webkit-transform: translateZ(0) scale(0.95238095);
+    transform: translateZ(0) scale(0.95238095);
+  }
+}
+@keyframes moonButtonExpand {
+  60% {
+    transform: translateZ(0) scale(1.05);
+  }
+}
+@keyframes moonButtonContract {
+  60% {
+    transform: translateZ(0) scale(0.95238095);
+  }
+}
+.moon-button {
+  position: relative;
+  overflow: visible;
+  height: 3.5rem;
+  line-height: 3rem;
+  border-radius: 416.625rem;
+  background-color: #4d4d4d;
+  border: 0.25rem solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-block;
+  width: auto;
+  min-width: 3.5rem;
+  max-width: 12.5rem;
+  padding: 0 1.125rem;
+  margin: 0 0.5rem;
+  color: #ccc;
+  box-sizing: border-box;
+  -webkit-transition: transform 0.2s ease-out;
+  -webkit-animation-duration: 0.2s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: ease-out;
+  transition: transform 0.2s ease-out;
+  animation-duration: 0.2s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+}
+.moon-button > * {
+  text-align: center;
+}
+.moon-button .moon-marquee {
+  width: 100%;
+  vertical-align: top;
+  text-align: center;
+}
+.moon-button:before {
+  content: none;
+}
+.moon-button .button-client {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: inherit;
+  animation: inherit;
+}
+.moon-button.min-width {
+  min-width: 7.5rem;
+}
+.moon-button.small {
+  height: 2.5rem;
+  min-width: 2.5rem;
+  line-height: 2rem;
+  padding: 0 0.75rem;
+  position: relative;
+  overflow: visible;
+}
+.moon-button.small.min-width {
+  min-width: 5.5rem;
+}
+.moon-button.small:before {
+  content: '';
+  position: absolute;
+  top: -0.625rem;
+  right: -0.625rem;
+  bottom: -0.625rem;
+  left: -0.625rem;
+}
+.moon-button.translucent {
+  background-color: rgba(77, 77, 77, 0.3);
+}
+.moon-button.transparent {
+  background-color: transparent;
+}
+.moon-button:not([disabled]).pressed,
+.moon-button:not([disabled]).spotlight:active {
+  -webkit-animation-name: moonButtonExpand;
+  animation-name: moonButtonExpand;
+}
+.moon-button:not([disabled]).pressed:before,
+.moon-button:not([disabled]).spotlight:active:before,
+.moon-button:not([disabled]).pressed:after,
+.moon-button:not([disabled]).spotlight:active:after,
+.moon-button:not([disabled]).pressed .button-client,
+.moon-button:not([disabled]).spotlight:active .button-client {
+  -webkit-animation-name: moonButtonContract;
+  animation-name: moonButtonContract;
+}
+.moon-button:not([disabled]).spotlight {
+  background-color: #cf0652;
+  color: #fff;
+}
+.moon-button:not([disabled]).active {
+  border-color: #cf0652;
+}
+.moon-button:not([disabled]).active.spotlight {
+  border-color: #fff;
+  background-color: #cf0652;
+  color: #fff;
+}
+.moon-button[disabled] {
+  cursor: default;
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+.moon-neutral .moon-button {
+  color: #4d4d4d;
+  background-color: #fff;
+}
+.moon-neutral .moon-button * {
+  color: inherit;
+}
+.moon-neutral .moon-button[disabled] {
+  color: #4d4d4d;
+  background-color: #fff;
+}
+
+.moon-overlay {
+  position: relative;
+}
+.moon-overlay-component {
+  display: inline-block;
+  pointer-events: auto;
+}
+.moon-overlay-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  display: none;
+}
+.moon-overlay-container.position-top {
+  bottom: auto;
+}
+.moon-overlay-container.position-bottom {
+  top: auto;
+}
+.moon-overlay-container.position-left {
+  right: auto;
+}
+.moon-overlay-container.position-right {
+  left: auto;
+}
+.moon-overlay-container.align-right {
+  text-align: right;
+}
+.moon-overlay-container.align-left {
+  text-align: left;
+}
+.moon-overlay-container.transparent {
+  background-color: transparent;
+}
+.moon-overlay-container.centered .moon-overlay-component {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+.moon-overlay-container.moon-overlay-selection .moon-icon {
+  display: block;
+  border: 0.25rem solid black;
+  background-color: white;
+  color: transparent;
+  margin: 0;
+  border-radius: 50%;
+  position: relative;
+  opacity: 0.5;
+}
+.moon-overlay-container.moon-overlay-selection .moon-icon:not(.small) {
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+}
+.selected .moon-overlay-container.moon-overlay-selection .moon-icon {
+  color: #cf0652;
+  border-color: #cf0652;
+  opacity: 1;
+}
+.moon-overlay-container.moon-overlay-text .moon-overlay-component {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.25rem;
+}
+.moon-overlay-container.moon-overlay-text .moon-overlay-component .moon-overlay-text-title {
+  font-family: "MuseoSans 500";
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.125rem;
+}
+.moon-overlay-container.moon-overlay-text .moon-overlay-component .moon-overlay-text-subtitle {
+  font-family: "Moonstone Miso Bold";
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+.spotlight .moon-overlay-container.show-on-spotlight,
+*:hover > .moon-overlay-container.show-on-hover,
+.selection-enabled .moon-overlay-container.moon-overlay-selection,
+.moon-overlay-container.show {
+  display: block;
 }
 
 .moon-video-player-channel-info {

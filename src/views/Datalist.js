@@ -1,26 +1,18 @@
 var kind = require('enyo/kind');
-var kind = require('enyo/kind');
 var FittableColumns = require('layout/FittableColumns');
 
-var GridListImageItem = require('moonstone/GridListImageItem'),Marquee = require('moonstone/Marquee'),MarqueeSupport = Marquee.Support, IconButton = require('moonstone/IconButton'), InputHeader = require('moonstone/InputHeader'), ToggleButton = require('moonstone/ToggleButton'), Header = require('moonstone/Header'), Button = require('moonstone/Button'), ExpandablePicker = require('moonstone/ExpandablePicker'), NewDataList = require('moonstone/NewDataList'), Overlay = require('moonstone/Overlay'), Panel = require('moonstone/Panel'), Scroller = require('moonstone/Scroller'), Collection = require('enyo/Collection'), Control = require('enyo/Control'), Img = require('enyo/Image'), Spinner = require('moonstone/Spinner');
-var AjaxSource = require('enyo/AjaxSource');
+var GridListImageItem = require('moonstone/GridListImageItem'), Marquee = require('moonstone/Marquee'), MarqueeSupport = Marquee.Support, IconButton = require('moonstone/IconButton'), InputHeader = require('moonstone/InputHeader'), ToggleButton = require('moonstone/ToggleButton'), Header = require('moonstone/Header'), Button = require('moonstone/Button'), ExpandablePicker = require('moonstone/ExpandablePicker'), NewDataList = require('moonstone/NewDataList'), Overlay = require('moonstone/Overlay'), Panel = require('moonstone/Panel'), Scroller = require('moonstone/Scroller'), Collection = require('enyo/Collection'), Control = require('enyo/Control'), Img = require('enyo/Image'), Spinner = require('moonstone/Spinner');
+
+var VideosSource = require('../data/VideosSource');
 var Video = require('./Video');
-new AjaxSource({
-	name : 'ajax'
-});
 
-var MyContactCollection = kind({
-	name : 'MyContactCollection',
-	kind : Collection,
-	source : 'ajax',
-	url : 'https://c3osv1d30.herokuapp.com/C305V1D30/Videos'
-});
-
-var myCollection = new MyContactCollection();
+var myCollection = new VideosSource.Videos_Recientes();
+var myCollectionSearch;
 
 var ImageItem = kind({
 	kind : GridListImageItem,
 	subCaption : 'Sub Caption',
+	ontap : 'itemSelected',
 	// mixins: [Overlay.Selection],
 	bindings : [ {
 		from : 'model.id_Menu',
@@ -93,7 +85,7 @@ var buttonComponents = [ {
 		style : 'height: 100%; width: 100%;'
 	} ],
 	bindings : [ {
-		from : 'model.url',
+		from : 'model.url_video',
 		to : '$.img.src'
 	} ]
 } ];
@@ -110,19 +102,23 @@ module.exports = kind({
 		kind : Panel,
 		fit : true,
 		autoNumber : false,
-		headerType: 'medium',
-		headerBackgroundSrc: 'http://lorempixel.com/g/1920/360/abstract/2/',
+		headerType : 'medium',
+		headerBackgroundSrc : 'http://lorempixel.com/g/1920/360/abstract/2/',
+		// onInputHeaderChange : 'handleInput',
+		onInputHeaderInput : 'handleInput',
 		headerOptions : {
 			fullBleedBackground : true,
 			inputMode : true,
+			dismissOnEnter : true,
 			placeholder : 'Buscar',
 		},
+		headerComponents : [
+		// {kind: Spinner, name: 'spinner'},
+		],
 		components : [ {
-			style : 'text-align: center',
-			components : [ {
-				kind : Spinner,
-				name : "spinner"
-			} ]
+			name : 'spinner',
+			kind : Spinner,
+			center : true
 		}, {
 			name : 'list',
 			kind : NewDataList,
@@ -131,13 +127,15 @@ module.exports = kind({
 			spacing : 20,
 			columns : 6,
 			rows : 1,
-			ontap : 'itemSelected',
 			components : imageComponents
 		} ]
 	} ],
 	bindings : [ {
-		from : ".collection.isFetching",
-		to : ".$.spinner.showing"
+		from : "collection.status",
+		to : "$.spinner.showing",
+		transform : function(value) {
+			return this.collection.isBusy();
+		}
 	}, {
 		from : 'collection',
 		to : '$.list.collection'
@@ -153,6 +151,21 @@ module.exports = kind({
 				video : ev.model
 			}
 		});
+	},
+	handleInput : function(sender, ev) {
+		var busqueda = ev.originator.getValue();
+		if (busqueda != '') {
+			var myCollectionSearch = new VideosSource.Videos_Buscar({
+				buscar : ev.originator.getValue()
+			});
+			this.set('collection', myCollectionSearch.fetch());
+		} else {
+			if (this.collection && this.collection.destroy) {
+				this.collection.destroy();
+			}
+			this.set('collection', myCollection);
+		}
+		return true;
 	},
 	refreshItems : function() {
 		if (this.collection && this.collection.destroy) {

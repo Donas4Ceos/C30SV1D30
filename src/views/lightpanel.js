@@ -1,136 +1,219 @@
 var
-	kind = require('enyo/kind'),
-	Control = require('enyo/Control');
+	kind = require('enyo/kind');
 
 var
+	FittableColumns = require('layout/FittableColumns');
+
+var
+	GridListImageItem = require('moonstone/GridListImageItem'),
 	Button = require('moonstone/Button'),
-	IconButton = require('moonstone/IconButton'),
-	Item = require('moonstone/Item'),
-	LightPanels = require('moonstone/LightPanels'),
-	Scroller = require('moonstone/Scroller');
+	ExpandablePicker = require('moonstone/ExpandablePicker'),
+	NewDataList = require('moonstone/NewDataList'),
+	Overlay = require('moonstone/Overlay'),
+	Panel = require('moonstone/Panel'),
+	Scroller = require('moonstone/Scroller'),
+	Collection = require('enyo/Collection'),
+	Control = require('enyo/Control'),
+	Img = require('enyo/Image');
 
-var controls = [
-	{kind: Item, content: 'Control Item 1'},
-	{kind: Item, content: 'Control Item 2'},
-	{kind: Item, content: 'Control Item 3'},
-	{kind: Item, content: 'Control Item 4'},
-	{kind: Item, content: 'Control Item 5'},
-	{kind: Item, content: 'Control Item 6'},
-	{kind: Item, content: 'Control Item 7'},
-	{kind: Item, content: 'Control Item 8'},
-	{kind: Item, content: 'Control Item 9'}
-];
-
-var ControlPanel = kind({
-	kind: LightPanels,
-	cacheViews: false,
-	popOnBack: false,
-	wrap: true,
-	orientation: LightPanels.Orientation.VERTICAL,
-	direction: LightPanels.Direction.BACKWARDS,
-	components: controls
+var ImageItem = kind({
+	kind: GridListImageItem,
+	subCaption: 'Sub Caption',
+	mixins: [Overlay.Selection],
+	bindings: [
+		{from: 'model.text', to: 'caption'},
+		{from: 'model.subText', to: 'subCaption'},
+		{from: 'model.url', to: 'source'}
+	]
 });
 
-var ControlContainer = kind({
-	kind: Control,
-	classes: 'control-container',
-	panelId: 0,
-	components: [
-		{kind: Control, components: [
-			{kind: IconButton, icon: 'arrowlargedown', ontap: 'prevIconTapped'},
-			{kind: IconButton, icon: 'arrowlargeup', ontap: 'nextIconTapped'}
-		]},
-		{kind: ControlPanel, name: 'controlPanel', classes: 'control-panel'}
-	],
+var NoImageItem = kind({
+	kind: ImageItem,
 	bindings: [
-		{from: 'panelId', to: '$.controlPanel.index', transform: function (id) {
-			// clamping id such that we have a valid value
-			return id < controls.length ? id : controls.length - 1;
-		}}
+		{from: 'model.bgColor', to: 'bgColor'}
 	],
-	prevIconTapped: function (sender, ev) {
-		this.$.controlPanel.previous();
-		return true;
+	componentOverrides: {
+		image: {kind: Control, mixins: [Overlay.Support, Overlay.Selection]}
 	},
-	nextIconTapped: function (sender, ev) {
-		this.$.controlPanel.next();
-		return true;
+	imageSizingChanged: function () {},
+	bgColorChanged: function () {
+		this.$.image.applyStyle('background', this.bgColor);
 	}
 });
 
-module.exports = kind({
-	name: 'moon.sample.LightPanelsSample',
-	classes: 'moon enyo-fit enyo-unselectable moon-light-panels-sample',
-	kind: Control,
-	components: [
-		{kind: LightPanels, name: 'panels'}
-	],
-	create: kind.inherit(function (sup) {
-		return function () {
-			var startIndex = 0,
-				info;
-
-			sup.apply(this, arguments);
-
-			info = this.generatePanelInfo(startIndex);
-			this.$.panels.createComponent(info, {owner: this});
-			this.$.panels.set('index', startIndex);
-		};
-	}),
-	generatePanelInfo: function (id) {
-		return {
-			classes: 'light-panel',
-			panelId: 'panel-' + id,
-			title: 'This is the extended and long title of panel ' + id,
-			headerComponents: [
+var
+	buttonComponents = [
+		{
+			kind: Control,
+			style: 'position: absolute;',
+			bindings: [
+				{from: 'model.text', to: '$.button.content'}
+			],
+			components: [
 				{
 					kind: Button,
-					content: 'Back',
-					small: true,
-					ontap: 'prevTapped'
+					name: 'button',
+					style: 'position: relative; height: 100%; width: 100%;',
+					selectedClass: 'active'
 				}
-			],
-			clientComponents: [
-				{kind: ControlContainer, panelId: id},
-				{kind: Scroller, classes: 'panel-scroller', components: [
-					{kind: Item, content: 'Item One', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Two', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Three', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Four', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Five', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Six', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Seven', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Eight', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Nine', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Ten', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Eleven', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Twelve', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Thirteen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Fourteen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Fifteen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Sixteen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Seventeen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Eighteen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Nineteen', ontap: 'nextTapped'},
-					{kind: Item, content: 'Item Twenty', ontap: 'nextTapped'}
-				]}
 			]
-		};
-	},
-	pushSinglePanel: function (direct) {
-		var panels = this.$.panels,
-			id = panels.getPanels().length,
-			info = this.generatePanelInfo(id);
+		}
+	],
+	imageComponents = [
+		{kind: ImageItem, style: 'position: absolute;'}
+	],
+	noImageComponents = [
+		{kind: NoImageItem, style: 'position: absolute;'}
+	],
+	plainImageComponents = [
+		{kind: Control, mixins: [Overlay.Support, Overlay.Selection], components: [
+			{name: 'img', kind: Img, style: 'height: 100%; width: 100%;'}
+		],bindings: [
+			{from: 'model.url', to: '$.img.src'}
+		]}
+	];
 
-		this.$.panels.pushPanel(info, {owner: this}, {direct: direct});
+function selectedValue (selected) {
+	return selected && selected.value;
+}
+
+module.exports = kind({
+	name: 'moon.sample.NewDataListSample',
+	kind: FittableColumns,
+	classes: 'moon enyo-fit enyo-unselectable',
+	style: 'padding: 0', // offsetting margin added by .moon
+	components: [
+		{
+			kind: Panel,
+			classes:'moon-6h',
+			title:'Menu',
+			components: [
+				{
+					kind: Scroller,
+					components: [
+						{
+							name: 'itemPicker',
+							kind: ExpandablePicker,
+							content: 'Items',
+							components: [
+								{content: 'Image Items', value: imageComponents, active: true},
+								{content: 'No-Image Items', value: noImageComponents},
+								{content: 'Plain Images', value: plainImageComponents},
+								{content: 'Buttons', value: buttonComponents}
+							]
+						},
+						{
+							name: 'directionPicker',
+							kind: ExpandablePicker,
+							content: 'Direction',
+							components: [
+								{content: 'Vertical', value: 'vertical', active: true},
+								{content: 'Horizontal', value: 'horizontal'}
+							]
+						},
+						{
+							name: 'dataTypePicker',
+							kind: ExpandablePicker,
+							content: 'Data',
+							components: [
+								{content: 'Collections/Models', value: 'EnyoData', active: true},
+								{content: 'JS Arrays/Objects', value: 'JS'}
+							]
+						},
+						{
+							name: 'selectionPicker',
+							kind: ExpandablePicker,
+							content: 'Selection',
+							components: [
+								{content: 'On', value: true},
+								{content: 'Off', value: false, active: true}
+							]
+						},
+						{
+							name: 'selectionTypePicker',
+							kind: ExpandablePicker,
+							content: 'Selection Type',
+							components: [
+								{content: 'Single', value: 'single', active: true},
+								{content: 'Multiple', value: 'multi'},
+								{content: 'Group', value: 'group'}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			kind: Panel,
+			fit: true,
+			title:'New Data List',
+			headerComponents: [
+				{kind: Button, content:'Refresh', ontap:'refreshItems'}
+			],
+			components: [
+				{
+					name: 'list',
+					kind: NewDataList,
+					minItemHeight: 270,
+					minItemWidth: 180,
+					spacing: 20,
+					columns: 6,
+					rows: 1,
+					components: imageComponents
+				}
+			]
+		}
+	],
+	bindings: [
+		{from: 'collection', to: '$.list.collection'},
+		{from: '$.itemPicker.selected', to: '$.list.components', transform: selectedValue},
+		{from: '$.directionPicker.selected', to: '$.list.direction', transform: selectedValue},
+		{from: '$.dataTypePicker.selected', to: 'dataType', transform: selectedValue},
+		{from: '$.selectionPicker.selected', to: '$.list.selection', transform: selectedValue},
+		{from: '$.selectionPicker.selected', to: '$.selectionTypePicker.showing', transform: selectedValue},
+		{from: '$.selectionTypePicker.selected', to: '$.list.selectionType', transform: selectedValue}
+	],
+	create: function () {
+		FittableColumns.prototype.create.apply(this, arguments);
+		this.refreshItems(500);
 	},
-	prevTapped: function (sender, ev) {
-		this.$.panels.previous();
-		return true;
+	generateRecords: function () {
+		var records = [],
+			idx     = this.modelIndex || 0,
+			title, subTitle, color;
+		for (; records.length < 500; ++idx) {
+			title = (idx % 8 === 0) ? ' with long title' : '';
+			subTitle = (idx % 8 === 0) ? 'Lorem ipsum dolor sit amet' : 'Subtitle';
+			color = Math.floor((Math.random()*(0x1000000-0x101010))+0x101010).toString(16);
+
+			records.push({
+				selected: false,
+				text: 'Item ' + idx + title,
+				subText: subTitle,
+				// url: 'http://placehold.it/300x300/9037ab/ffffff&text=Image'
+				url: 'http://placehold.it/300x300/' + color + '/ffffff&text=Image ' + idx,
+				bgColor: '#' + color
+			});
+		}
+		// update our internal index so it will always generate unique values
+		this.modelIndex = idx;
+		return records;
 	},
-	nextTapped: function (sender, ev) {
-		this.pushSinglePanel();
-		return true;
+	refreshItems: function (num) {
+		var data;
+
+		num = (typeof num === 'number') ? num : 100;
+		data = this.generateRecords(num);
+
+		if (this.collection && this.collection.destroy) {
+			this.collection.destroy();
+		}
+		this.set('collection', this.dataType === 'JS' ? data : new Collection(data));
+	},
+	dataTypeChanged: function (prev) {
+		if (prev) {
+			this.refreshItems(500);
+		}
 	}
 });
 

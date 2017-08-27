@@ -5,6 +5,7 @@ var index = 0;
 var myCollectiontemporadas = null;
 var myCollectioncapitulos = null;
 var Divider = require('moonstone/Divider'), Img = require('enyo/Image'), ImageItem = require('moonstone/ImageItem'), Item = require('moonstone/Item'), ListActions = require('moonstone/ListActions'), Panels = require('moonstone/Panels'), Scroller = require('moonstone/Scroller'), Tooltip = require('moonstone/Tooltip'), TooltipDecorator = require('moonstone/TooltipDecorator');
+var VideosSource = require('../data/VideosSource');
 
 module.exports = kind({
 	name : 'moon.sample.AlwaysViewingPanelsWithVideoSample',
@@ -138,7 +139,7 @@ module.exports = kind({
 								fullBleedBackground : true
 							},
 							headerComponents : [ {
-								
+
 								name : 'img_descserie',
 								kind : ImageItem,
 								source : Img.placeholder,
@@ -168,20 +169,23 @@ module.exports = kind({
 								} ]
 							} ]
 						}, {
-							//title : 'panel_capitulos',
+							// title : 'panel_capitulos',
 							name : 'panel_capitulos',
 							headerType : 'medium',
 							headerOptions : {
 								fullBleedBackground : true
 							},
 							headerComponents : [ {
-								
+
 								name : 'img_desccapitulos',
 								kind : ImageItem,
 								source : Img.placeholder,
 								label : 'Breaking Bad'
-								//	,
-								//text : 'A struggling high school chemistry teacher who is diagnosed with inoperable lung cancer turns to a life of crime, producing and selling methamphetamine with a former student'
+							// ,
+							// text : 'A struggling high school chemistry
+							// teacher who is diagnosed with inoperable lung
+							// cancer turns to a life of crime, producing and
+							// selling methamphetamine with a former student'
 							} ],
 							autoNumber : false,
 							components : [ {
@@ -215,19 +219,19 @@ module.exports = kind({
 	}, {
 		from : "video.url_imagen",
 		to : ".$.img_descserie.source"
-	} , {
+	}, {
 		from : "video.url_imagen",
 		to : ".$.img_desccapitulos.source"
-	}
-	],
+	} ],
 	create : function() {
 		this.inherited(arguments);
+		new VideosSource.Masvistopost({id_video:this.video.get('id_video')}).commit();
 		myCollectiontemporadas = new Collection(this.video.get('temporadas'));
 		myCollectioncapitulos = new Collection(myCollectiontemporadas.at(0)
 				.get('capitulos'));
 		this.$.repeatertemporadas.set('collection', myCollectiontemporadas);
-		//this.actualizarvideo(myCollectioncapitulos.at(0).get('stream'));
 		this.actualizarvideo(myCollectioncapitulos.at(0).get('stream'));
+		 //this.actualizarvideo("https://openload.co/f/q4Ifk1_IaQk/01x01-Basura_En_La_Cajuela.mp4");
 	},
 	seleccionar : function(inSender, inEvent) {
 		if (index != inEvent.index) {
@@ -252,9 +256,9 @@ module.exports = kind({
 		myCollectioncapitulos = new Collection(myCollectiontemporadas.at(
 				ev.index).get('capitulos'));
 		this.$.repeatercapitulos.set('collection', myCollectioncapitulos);
-		
-		this.$.img_desccapitulos.set('label', myCollectiontemporadas.at(ev.index)
-				.get('temporada'));
+
+		this.$.img_desccapitulos.set('label', myCollectiontemporadas.at(
+				ev.index).get('temporada'));
 		this.$.panels.next();
 		return true;
 	}

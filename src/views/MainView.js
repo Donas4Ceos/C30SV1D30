@@ -11,7 +11,31 @@
 
 var kind = require('enyo/kind'), Panels = require('moonstone/Panels'), Panel = require('moonstone/Panel'), BodyText = require('moonstone/BodyText'), IconButton = require('moonstone/IconButton');
 var Datalist = require('./Datalist');
+var Control = require('enyo/Control');
+var lightpanel=require('./lightpanel');
 var CarouselArranger = require('layout/CarouselArranger');
+var Spinner = require('moonstone/Spinner');
+// var Browser = require('zombie');
+
+var controliframe=kind({
+    name: "Circle",
+    kind: Control,
+  classes: "enyo-fit",
+  components: [
+      {
+          tag: "iframe",
+          src: "https://openload.co/embed/q4Ifk1_IaQk/01x01-Basura_En_La_Cajuela.mp4",
+          attributes: {
+              allowfullscreen: ""
+          },
+          domStyles: {
+              width: "100%",
+              height: "100%"
+          }
+      }
+  ]
+});
+
 
 module.exports = kind({
 	name : 'myapp.MainView',
@@ -20,16 +44,21 @@ module.exports = kind({
 	handlers : {
 		onRequestPushPanel : 'pushPanel'
 	},
-	components : [ {
+	components : [ 
+	               {
 		kind : Panels,
-		hasCloseButton:false,
+		hasCloseButton : false,
 		arrangerKind : CarouselArranger,
 		classes : 'enyo-arranger-fit',
 		popOnBack : true,
-		components : [ {
-			kind : Datalist
+		components : [
+		{
+			//kind:controliframe
+			//kind : lightpanel,
+			kind : Datalist,
 		} ]
-	} ],
+	} 
+	               ],
 	pushPanel : function(sender, ev) {
 		this.$.panels.pushPanel(ev.panel);
 	}

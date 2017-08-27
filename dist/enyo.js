@@ -1491,59 +1491,6 @@ var rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\u
 exports.isRtl = function (str) {
 	return rtlPattern.test(str);
 };
-}],'enyo/json':[function (module,exports,global,require,request){
-require('enyo');
-
-
-/**
-* [JSON]{@glossary JSON} related methods and wrappers.
-*
-* @module enyo/json
-* @public
-*/
-module.exports = {
-	
-	/**
-	* Wrapper for [JSON.stringify()]{@glossary JSON.stringify}. Creates a
-	* [JSON]{@glossary JSON} [string]{@glossary String} from an
-	* [object]{@glossary Object}.
-	*
-	* @see {@glossary JSON.stringify}
-	* @param {Object} value - The [object]{@glossary Object} to convert to a
-	*	[JSON]{@glossary JSON} [string]{@glossary String}.
-	* @param {(Function|String[])} [replacer] An optional parameter indicating either an
-	*	[array]{@glossary Array} of keys to include in the final output or a
-	*	[function]{@glossary Function} that will have the opportunity to dynamically return
-	*	values to include for keys.
-	* @param {(Number|String)} [space] - Determines the spacing (if any) for pretty-printed
-	*	output of the JSON string. A [number]{@glossary Number} indicates the number of
-	* spaces to use in the output, while a string will be used verbatim.
-	* @returns {String} The JSON string for the given object.
-	* @public
-	*/
-	stringify: function(value, replacer, space) {
-		return JSON.stringify(value, replacer, space);
-	},
-	
-	/**
-	* Wrapper for [JSON.parse()]{@glossary JSON.parse}. Parses a valid
-	* [JSON]{@glossary JSON} [string]{@glossary String} and returns an
-	* [object]{@glossary Object}, or `null` if the parameters are invalid.
-	*
-	* @see {@glossary JSON.parse}
-	* @param {String} json - The [JSON]{@glossary JSON} [string]{@glossary String} to
-	*	parse into an [object]{@glossary Object}.
-	* @param {Function} [reviver] - The optional [function]{@glossary Function} to use to
-	*	parse individual keys of the return object.
-	* @returns {(Object|null)} If parameters are valid, an [object]{@glossary Object}
-	* is returned; otherwise, `null`.
-	* @public
-	*/
-	parse: function(json, reviver) {
-		return json ? JSON.parse(json, reviver) : null;
-	}
-};
-
 }],'enyo/roots':[function (module,exports,global,require,request){
 require('enyo');
 
@@ -1625,6 +1572,59 @@ exports.addToRoots = function (view) {
 			// now we can call the original
 			destroy.apply(this, arguments);
 		};
+	}
+};
+
+}],'enyo/json':[function (module,exports,global,require,request){
+require('enyo');
+
+
+/**
+* [JSON]{@glossary JSON} related methods and wrappers.
+*
+* @module enyo/json
+* @public
+*/
+module.exports = {
+	
+	/**
+	* Wrapper for [JSON.stringify()]{@glossary JSON.stringify}. Creates a
+	* [JSON]{@glossary JSON} [string]{@glossary String} from an
+	* [object]{@glossary Object}.
+	*
+	* @see {@glossary JSON.stringify}
+	* @param {Object} value - The [object]{@glossary Object} to convert to a
+	*	[JSON]{@glossary JSON} [string]{@glossary String}.
+	* @param {(Function|String[])} [replacer] An optional parameter indicating either an
+	*	[array]{@glossary Array} of keys to include in the final output or a
+	*	[function]{@glossary Function} that will have the opportunity to dynamically return
+	*	values to include for keys.
+	* @param {(Number|String)} [space] - Determines the spacing (if any) for pretty-printed
+	*	output of the JSON string. A [number]{@glossary Number} indicates the number of
+	* spaces to use in the output, while a string will be used verbatim.
+	* @returns {String} The JSON string for the given object.
+	* @public
+	*/
+	stringify: function(value, replacer, space) {
+		return JSON.stringify(value, replacer, space);
+	},
+	
+	/**
+	* Wrapper for [JSON.parse()]{@glossary JSON.parse}. Parses a valid
+	* [JSON]{@glossary JSON} [string]{@glossary String} and returns an
+	* [object]{@glossary Object}, or `null` if the parameters are invalid.
+	*
+	* @see {@glossary JSON.parse}
+	* @param {String} json - The [JSON]{@glossary JSON} [string]{@glossary String} to
+	*	parse into an [object]{@glossary Object}.
+	* @param {Function} [reviver] - The optional [function]{@glossary Function} to use to
+	*	parse individual keys of the return object.
+	* @returns {(Object|null)} If parameters are valid, an [object]{@glossary Object}
+	* is returned; otherwise, `null`.
+	* @public
+	*/
+	parse: function(json, reviver) {
+		return json ? JSON.parse(json, reviver) : null;
 	}
 };
 
@@ -5041,97 +5041,7 @@ module.exports = {
 	}
 };
 
-},{'../dom':'enyo/dom','../platform':'enyo/platform','../utils':'enyo/utils'}],'enyo/ApplicationSupport':[function (module,exports,global,require,request){
-/**
-* Exports the {@link module:enyo/ApplicationSupport~ApplicationSupport} mixin.
-* @module enyo/ApplicationSupport
-*/
-
-require('enyo');
-
-var kind = require('./kind');
-
-/**
-* An internally-used support {@glossary mixin} that is applied to all
-* [components]{@link module:enyo/Component~Component} of an {@link module:enyo/Application~Application} instance
-* (and to their components, recursively). This mixin adds an `app` property to
-* each component -- a local reference to the `Application` instance that
-* the component belongs to.
-* 
-* @mixin
-* @protected
-*/
-var ApplicationSupport = {
-
-	/**
-	* @private
-	*/
-	name: 'ApplicationSupport',
-
-	/**
-	* @private
-	*/
-	adjustComponentProps: kind.inherit(function (sup) {
-		return function (props) {
-			props.app = props.app || this.app;
-			sup.apply(this, arguments);
-		};
-	}),
-
-	/**
-	* @private
-	*/
-	destroy: kind.inherit(function (sup) {
-		return function () {
-			// release the reference to the application
-			this.app = null;
-			sup.apply(this, arguments);
-		};
-	})
-
-};
-
-module.exports = ApplicationSupport;
-
-},{'./kind':'enyo/kind'}],'enyo/ComponentBindingSupport':[function (module,exports,global,require,request){
-/**
-* Exports the {@link module:enyo/ComponentBindingSupport~ComponentBindingSupport} mixin.
-* @module enyo/ComponentBindingSupport
-*/
-
-require('enyo');
-
-var
-	kind = require('./kind');
-
-/**
-* An internally-used {@glossary mixin} applied to {@link module:enyo/Component~Component}
-* instances to better support [bindings]{@link module:enyo/Binding~Binding}.
-*
-* @mixin
-* @protected
-*/
-var ComponentBindingSupport = {
-	
-	/**
-	* @private
-	*/
-	name: 'ComponentBindingSupport',
-	
-	/**
-	* @private
-	*/
-	adjustComponentProps: kind.inherit(function (sup) {
-		return function (props) {
-			sup.apply(this, arguments);
-			props.bindingTransformOwner || (props.bindingTransformOwner = this.getInstanceOwner());
-		};
-	})
-};
-
-module.exports = ComponentBindingSupport;
-
-},{'./kind':'enyo/kind'}],'enyo/Control/floatingLayer':[function (module,exports,global,require,request){
+},{'../dom':'enyo/dom','../platform':'enyo/platform','../utils':'enyo/utils'}],'enyo/Control/floatingLayer':[function (module,exports,global,require,request){
 /**
 * Exports the {@link module:enyo/Control/floatingLayer~FloatingLayer} singleton instance.
 * @module enyo/Control/floatingLayer
@@ -5251,120 +5161,7 @@ module.exports = function (Control) {
 
 	return FloatingLayer;
 };
-},{'../kind':'enyo/kind','../platform':'enyo/platform'}],'enyo/MultipleDispatchSupport':[function (module,exports,global,require,request){
-/**
-* Exports the {@link module:enyo/MultipleDispatchSupport~MultipleDispatchSupport} mixin.
-* @module enyo/MultipleDispatchSupport
-*/
-
-require('enyo');
-
-var
-	kind = require('./kind'),
-	utils = require('./utils');
-
-/**
-* A collection of methods to allow a single {@link module:enyo/Component~Component} to
-* [dispatch]{@link module:enyo/Component~Component#dispatchEvent} a single {@glossary event} to
-* multiple targets. The events are synchronously propagated in the order in
-* which the targets are encountered. Note that this {@glossary mixin} is
-* already applied to a base [kind]{@glossary kind},
-* {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent}.
-*
-* @mixin
-* @public
-*/
-var MultipleDispatchSupport = {
-	
-	/**
-	* @private
-	*/
-	name: 'MultipleDispatchSupport',
-	
-	/**
-	* Adds a target for dispatching.
-	*
-	* @param {module:enyo/Component~Component} component - The {@link module:enyo/Component~Component} to add as a dispatch target.
-	* @public
-	*/
-	addDispatchTarget: function (component) {
-		var dt = this._dispatchTargets;
-		if (component && !~utils.indexOf(component, dt)) {
-			dt.push(component);
-		}
-	},
-	/**
-	* Removes a target from dispatching.
-	*
-	* @param {module:enyo/Component~Component} component - The {@link module:enyo/Component~Component} to remove as a dispatch
-	*	target.
-	* @public
-	*/
-	removeDispatchTarget: function (component) {
-		var dt = this._dispatchTargets, i;
-		i = utils.indexOf(component, dt);
-		if (i > -1) {
-			dt.splice(i, 1);
-		}
-	},
-	
-	/**
-	* @private
-	*/
-	bubbleUp: kind.inherit(function (sup) {
-		return function (name, event, sender) {
-			if (this._dispatchDefaultPath) {
-				sup.apply(this, arguments);
-			}
-			var dt = this._dispatchTargets;
-			for (var i=0, t; (t=dt[i]); ++i) {
-				if (t && !t.destroyed) {
-					t.dispatchBubble(name, event, sender);
-				}
-			}
-		};
-	}),
-	
-	/**
-	* @private
-	*/
-	ownerChanged: kind.inherit(function (sup) {
-		return function () {
-			sup.apply(this, arguments);
-			var o = this.owner;
-			this._dispatchDefaultPath = !! o;
-		};
-	}),
-	
-	/**
-	* @private
-	*/
-	constructor: kind.inherit(function (sup) {
-		return function () {
-			this._dispatchTargets = [];
-			return sup.apply(this, arguments);
-		};
-	}),
-	
-	/**
-	* @private
-	*/
-	destroy: kind.inherit(function (sup) {
-		return function () {
-			this._dispatchTargets = null;
-			sup.apply(this, arguments);
-		};
-	}),
-	
-	/**
-	* @private
-	*/
-	_dispatchDefaultPath: false
-};
-
-module.exports = MultipleDispatchSupport;
-
-},{'./kind':'enyo/kind','./utils':'enyo/utils'}],'enyo/Layout':[function (module,exports,global,require,request){
+},{'../kind':'enyo/kind','../platform':'enyo/platform'}],'enyo/Layout':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -6702,128 +6499,210 @@ Source.execute = function (action, model, opts) {
 Source.sources = sources;
 
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./logger':'enyo/logger'}],'enyo/MixinSupport':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./logger':'enyo/logger'}],'enyo/ApplicationSupport':[function (module,exports,global,require,request){
 /**
-* Exports the {@link module:enyo/MixinSupport~MixinSupport} mixin.
-* @module enyo/MixinSupport
+* Exports the {@link module:enyo/ApplicationSupport~ApplicationSupport} mixin.
+* @module enyo/ApplicationSupport
 */
 
 require('enyo');
 
-
-var
-	utils = require('./utils'),
-	kind = require('./kind'),
-	logger = require('./logger');
-
-kind.concatenated.push('mixins');
-
-var sup = kind.statics.extend;
-
-var extend = kind.statics.extend = function extend (args, target) {
-	if (utils.isArray(args)) return utils.forEach(args, function (ln) { extend.call(this, ln, target); }, this);
-	if (typeof args == 'string') apply(target || this.prototype, args);
-	else {
-		if (args.mixins) feature(target || this, args);
-	
-		// this allows for mixins to apply mixins which...is less than ideal but possible
-		if (args.name) apply(target || this.prototype, args);
-		else sup.apply(this, arguments);
-	}
-};
-
-/*
-* Applies, with safeguards, a given mixin to an object.
-*/
-function apply (proto, props) {
-	var applied = proto._mixins? (proto._mixins = proto._mixins.slice()): (proto._mixins = [])
-		, name = utils.isString(props)? props: props.name
-		, idx = utils.indexOf(name, applied);
-	if (idx < 0) {
-		name == props && (props = utils.getPath(name));
-		// if we could not resolve the requested mixin (should never happen)
-		// we throw a simple little error
-		// @TODO: Normalize error format
-		!props && logger.error('Could not find the mixin ' + name);
-		
-		// it should be noted that this ensures it won't recursively re-add the same mixin but
-		// since it is possible for mixins to apply mixins the names will be out of order
-		// this name is pushed on but the nested mixins are applied before this one
-		name && applied.push(name);
-		
-		props = utils.clone(props);
-		
-		// we need to temporarily move the constructor if it has one so it
-		// will override the correct method - this is a one-time permanent
-		// runtime operation so subsequent additions of the mixin don't require
-		// it again
-		if (props.hasOwnProperty('constructor')) {
-			props._constructor = props.constructor;
-			delete props.constructor;
-		}
-		
-		delete props.name;
-		extend(props, proto);
-		
-		// now put it all back the way it was
-		props.name = name;
-	}
-}
-
-function feature (ctor, props) {
-	if (props.mixins) {
-		var proto = ctor.prototype || ctor
-			, mixins = props.mixins;
-		
-		// delete props.mixins;
-		// delete proto.mixins;
-		
-		proto._mixins && (proto._mixins = proto._mixins.slice());
-		utils.forEach(mixins, function (ln) { apply(proto, ln); });
-	}
-}
-
-kind.features.push(feature);
+var kind = require('./kind');
 
 /**
-* An internally-used support {@glossary mixin} that adds API methods to aid in
-* using and applying mixins to [kinds]{@glossary kind}.
+* An internally-used support {@glossary mixin} that is applied to all
+* [components]{@link module:enyo/Component~Component} of an {@link module:enyo/Application~Application} instance
+* (and to their components, recursively). This mixin adds an `app` property to
+* each component -- a local reference to the `Application` instance that
+* the component belongs to.
+* 
+* @mixin
+* @protected
+*/
+var ApplicationSupport = {
+
+	/**
+	* @private
+	*/
+	name: 'ApplicationSupport',
+
+	/**
+	* @private
+	*/
+	adjustComponentProps: kind.inherit(function (sup) {
+		return function (props) {
+			props.app = props.app || this.app;
+			sup.apply(this, arguments);
+		};
+	}),
+
+	/**
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function () {
+			// release the reference to the application
+			this.app = null;
+			sup.apply(this, arguments);
+		};
+	})
+
+};
+
+module.exports = ApplicationSupport;
+
+},{'./kind':'enyo/kind'}],'enyo/ComponentBindingSupport':[function (module,exports,global,require,request){
+/**
+* Exports the {@link module:enyo/ComponentBindingSupport~ComponentBindingSupport} mixin.
+* @module enyo/ComponentBindingSupport
+*/
+
+require('enyo');
+
+var
+	kind = require('./kind');
+
+/**
+* An internally-used {@glossary mixin} applied to {@link module:enyo/Component~Component}
+* instances to better support [bindings]{@link module:enyo/Binding~Binding}.
 *
 * @mixin
 * @protected
 */
-var MixinSupport = {
+var ComponentBindingSupport = {
 	
 	/**
 	* @private
 	*/
-	name: 'MixinSupport',
+	name: 'ComponentBindingSupport',
 	
 	/**
-	* Extends the instance with the given properties.
-	*
-	* @param {Object} props - The property [hash]{@glossary Object} from which to extend
-	*	the callee.
+	* @private
 	*/
-	extend: function (props) {
-		props && apply(this, props);
+	adjustComponentProps: kind.inherit(function (sup) {
+		return function (props) {
+			sup.apply(this, arguments);
+			props.bindingTransformOwner || (props.bindingTransformOwner = this.getInstanceOwner());
+		};
+	})
+};
+
+module.exports = ComponentBindingSupport;
+
+},{'./kind':'enyo/kind'}],'enyo/MultipleDispatchSupport':[function (module,exports,global,require,request){
+/**
+* Exports the {@link module:enyo/MultipleDispatchSupport~MultipleDispatchSupport} mixin.
+* @module enyo/MultipleDispatchSupport
+*/
+
+require('enyo');
+
+var
+	kind = require('./kind'),
+	utils = require('./utils');
+
+/**
+* A collection of methods to allow a single {@link module:enyo/Component~Component} to
+* [dispatch]{@link module:enyo/Component~Component#dispatchEvent} a single {@glossary event} to
+* multiple targets. The events are synchronously propagated in the order in
+* which the targets are encountered. Note that this {@glossary mixin} is
+* already applied to a base [kind]{@glossary kind},
+* {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent}.
+*
+* @mixin
+* @public
+*/
+var MultipleDispatchSupport = {
+	
+	/**
+	* @private
+	*/
+	name: 'MultipleDispatchSupport',
+	
+	/**
+	* Adds a target for dispatching.
+	*
+	* @param {module:enyo/Component~Component} component - The {@link module:enyo/Component~Component} to add as a dispatch target.
+	* @public
+	*/
+	addDispatchTarget: function (component) {
+		var dt = this._dispatchTargets;
+		if (component && !~utils.indexOf(component, dt)) {
+			dt.push(component);
+		}
+	},
+	/**
+	* Removes a target from dispatching.
+	*
+	* @param {module:enyo/Component~Component} component - The {@link module:enyo/Component~Component} to remove as a dispatch
+	*	target.
+	* @public
+	*/
+	removeDispatchTarget: function (component) {
+		var dt = this._dispatchTargets, i;
+		i = utils.indexOf(component, dt);
+		if (i > -1) {
+			dt.splice(i, 1);
+		}
 	},
 	
 	/**
 	* @private
 	*/
-	importProps: kind.inherit(function (sup) {
-		return function (props) {
-			props && props.mixins && feature(this, props);
-			
+	bubbleUp: kind.inherit(function (sup) {
+		return function (name, event, sender) {
+			if (this._dispatchDefaultPath) {
+				sup.apply(this, arguments);
+			}
+			var dt = this._dispatchTargets;
+			for (var i=0, t; (t=dt[i]); ++i) {
+				if (t && !t.destroyed) {
+					t.dispatchBubble(name, event, sender);
+				}
+			}
+		};
+	}),
+	
+	/**
+	* @private
+	*/
+	ownerChanged: kind.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			var o = this.owner;
+			this._dispatchDefaultPath = !! o;
+		};
+	}),
+	
+	/**
+	* @private
+	*/
+	constructor: kind.inherit(function (sup) {
+		return function () {
+			this._dispatchTargets = [];
+			return sup.apply(this, arguments);
+		};
+	}),
+	
+	/**
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function () {
+			this._dispatchTargets = null;
 			sup.apply(this, arguments);
 		};
-	})
+	}),
+	
+	/**
+	* @private
+	*/
+	_dispatchDefaultPath: false
 };
 
-module.exports = MixinSupport;
+module.exports = MultipleDispatchSupport;
 
-},{'./utils':'enyo/utils','./kind':'enyo/kind','./logger':'enyo/logger'}],'enyo/ComputedSupport':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils'}],'enyo/ComputedSupport':[function (module,exports,global,require,request){
 /**
 * Exports the {@link module:enyo/ComputedSupport~ComputedSupport} mixin.
 * @module enyo/ComputedSupport
@@ -7067,7 +6946,128 @@ kind.concatHandler = function (ctor, props, instance) {
 	}
 };
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils'}],'enyo/LinkedListNode':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils'}],'enyo/MixinSupport':[function (module,exports,global,require,request){
+/**
+* Exports the {@link module:enyo/MixinSupport~MixinSupport} mixin.
+* @module enyo/MixinSupport
+*/
+
+require('enyo');
+
+
+var
+	utils = require('./utils'),
+	kind = require('./kind'),
+	logger = require('./logger');
+
+kind.concatenated.push('mixins');
+
+var sup = kind.statics.extend;
+
+var extend = kind.statics.extend = function extend (args, target) {
+	if (utils.isArray(args)) return utils.forEach(args, function (ln) { extend.call(this, ln, target); }, this);
+	if (typeof args == 'string') apply(target || this.prototype, args);
+	else {
+		if (args.mixins) feature(target || this, args);
+	
+		// this allows for mixins to apply mixins which...is less than ideal but possible
+		if (args.name) apply(target || this.prototype, args);
+		else sup.apply(this, arguments);
+	}
+};
+
+/*
+* Applies, with safeguards, a given mixin to an object.
+*/
+function apply (proto, props) {
+	var applied = proto._mixins? (proto._mixins = proto._mixins.slice()): (proto._mixins = [])
+		, name = utils.isString(props)? props: props.name
+		, idx = utils.indexOf(name, applied);
+	if (idx < 0) {
+		name == props && (props = utils.getPath(name));
+		// if we could not resolve the requested mixin (should never happen)
+		// we throw a simple little error
+		// @TODO: Normalize error format
+		!props && logger.error('Could not find the mixin ' + name);
+		
+		// it should be noted that this ensures it won't recursively re-add the same mixin but
+		// since it is possible for mixins to apply mixins the names will be out of order
+		// this name is pushed on but the nested mixins are applied before this one
+		name && applied.push(name);
+		
+		props = utils.clone(props);
+		
+		// we need to temporarily move the constructor if it has one so it
+		// will override the correct method - this is a one-time permanent
+		// runtime operation so subsequent additions of the mixin don't require
+		// it again
+		if (props.hasOwnProperty('constructor')) {
+			props._constructor = props.constructor;
+			delete props.constructor;
+		}
+		
+		delete props.name;
+		extend(props, proto);
+		
+		// now put it all back the way it was
+		props.name = name;
+	}
+}
+
+function feature (ctor, props) {
+	if (props.mixins) {
+		var proto = ctor.prototype || ctor
+			, mixins = props.mixins;
+		
+		// delete props.mixins;
+		// delete proto.mixins;
+		
+		proto._mixins && (proto._mixins = proto._mixins.slice());
+		utils.forEach(mixins, function (ln) { apply(proto, ln); });
+	}
+}
+
+kind.features.push(feature);
+
+/**
+* An internally-used support {@glossary mixin} that adds API methods to aid in
+* using and applying mixins to [kinds]{@glossary kind}.
+*
+* @mixin
+* @protected
+*/
+var MixinSupport = {
+	
+	/**
+	* @private
+	*/
+	name: 'MixinSupport',
+	
+	/**
+	* Extends the instance with the given properties.
+	*
+	* @param {Object} props - The property [hash]{@glossary Object} from which to extend
+	*	the callee.
+	*/
+	extend: function (props) {
+		props && apply(this, props);
+	},
+	
+	/**
+	* @private
+	*/
+	importProps: kind.inherit(function (sup) {
+		return function (props) {
+			props && props.mixins && feature(this, props);
+			
+			sup.apply(this, arguments);
+		};
+	})
+};
+
+module.exports = MixinSupport;
+
+},{'./utils':'enyo/utils','./kind':'enyo/kind','./logger':'enyo/logger'}],'enyo/LinkedListNode':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -7361,7 +7361,47 @@ var RepeaterChildSupport = {
 
 module.exports = RepeaterChildSupport;
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./Binding':'enyo/Binding'}],'enyo/BindingSupport':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./Binding':'enyo/Binding'}],'enyo/EmptyBinding':[function (module,exports,global,require,request){
+require('enyo');
+
+/**
+* Contains the declaration for the {@link module:enyo/EmptyBinding~EmptyBinding} kind.
+* @module enyo/EmptyBinding
+*/
+
+var
+	kind = require('./kind');
+
+var
+	Binding = require('./Binding');
+
+/**
+* An {@link module:enyo/Binding~Binding} that checks for empty values. Will be `true` if there is some
+* value, but `false` for an empty [string]{@glossary String}, `null`, or `undefined`.
+*
+* @class EmptyBinding
+* @extends module:enyo/Binding~Binding
+* @public
+*/
+module.exports = kind(
+	/** @lends module:enyo/EmptyBinding~EmptyBinding.prototype */ {
+	
+	name: 'enyo.EmptyBinding',
+	
+	/**
+	* @private
+	*/
+	kind: Binding,
+	
+	/**
+	* @private
+	*/
+	transform: function (value) {
+		return (value !== '' && value != null);
+	}
+});
+
+},{'./kind':'enyo/kind','./Binding':'enyo/Binding'}],'enyo/BindingSupport':[function (module,exports,global,require,request){
 /**
 * Exports the {@link module:enyo/BindingSupport~BindingSupport} mixin
 * @module enyo/BindingSupport
@@ -7545,47 +7585,7 @@ kind.concatHandler = function (ctor, props, instance) {
 	}
 };
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./Binding':'enyo/Binding'}],'enyo/EmptyBinding':[function (module,exports,global,require,request){
-require('enyo');
-
-/**
-* Contains the declaration for the {@link module:enyo/EmptyBinding~EmptyBinding} kind.
-* @module enyo/EmptyBinding
-*/
-
-var
-	kind = require('./kind');
-
-var
-	Binding = require('./Binding');
-
-/**
-* An {@link module:enyo/Binding~Binding} that checks for empty values. Will be `true` if there is some
-* value, but `false` for an empty [string]{@glossary String}, `null`, or `undefined`.
-*
-* @class EmptyBinding
-* @extends module:enyo/Binding~Binding
-* @public
-*/
-module.exports = kind(
-	/** @lends module:enyo/EmptyBinding~EmptyBinding.prototype */ {
-	
-	name: 'enyo.EmptyBinding',
-	
-	/**
-	* @private
-	*/
-	kind: Binding,
-	
-	/**
-	* @private
-	*/
-	transform: function (value) {
-		return (value !== '' && value != null);
-	}
-});
-
-},{'./kind':'enyo/kind','./Binding':'enyo/Binding'}],'enyo/XhrSource':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./Binding':'enyo/Binding'}],'enyo/XhrSource':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -9218,206 +9218,7 @@ function addGetterSetter (prop, value, proto) {
 	} else if (fn && typeof fn == 'function' && !fn.generated) setters[prop] = setName;
 }
 
-},{'./kind':'enyo/kind','./logger':'enyo/logger','./utils':'enyo/utils','./MixinSupport':'enyo/MixinSupport','./ObserverSupport':'enyo/ObserverSupport','./BindingSupport':'enyo/BindingSupport','./ComputedSupport':'enyo/ComputedSupport'}],'enyo/jobs':[function (module,exports,global,require,request){
-require('enyo');
-
-var
-	utils = require('./utils'),
-	kind = require('./kind');
-	
-var CoreObject = require('./CoreObject');
-
-/**
-* The {@link module:enyo/jobs} singleton provides a mechanism for queueing tasks
-* (i.e., functions) for execution in order of priority. The execution of the
-* current job stack may be blocked programmatically by setting a priority
-* level (run level) below which no jobs are executed.
-*
-* At the moment, only {@link module:enyo/Animator~Animator} uses this interface, setting a
-* priority of 4, which blocks all low priority tasks from executing during
-* animations. To maintain backward compatibility, jobs are assigned a priority
-* of 5 by default; thus they are not blocked by animations.
-*
-* Normally, application code will not use `enyo/jobs` directly, but will
-* instead use the [job()]{@link module:enyo/Component~Component#job} method of
-* {@link module:enyo/Component~Component}.
-*
-* @module enyo/jobs
-* @public
-*/
-module.exports = kind.singleton(
-	/** @lends module:enyo/jobs */ {
-	
-	kind: CoreObject,
-	
-	/**
-	* @private
-	*/
-	published: /** @lends module:enyo/jobs~jobs */ {
-		
-		/**
-		* The current priority level.
-		*
-		* @type {Number}
-		* @default 0
-		* @public
-		*/
-		priorityLevel: 0
-	},
-	
-	/**
-	* Prioritized by index.
-	*
-	* @private
-	*/
-	_jobs: [ [], [], [], [], [], [], [], [], [], [] ],
-	
-	/**
-	* @private
-	*/
-	_priorities: {},
-	
-	/**
-	* @private
-	*/
-	_namedJobs: {},
-	
-	/**
-	* @private
-	*/
-	_magicWords: {
-		'low': 3,
-		'normal': 5,
-		'high': 7
-	},
-	
-	/**
-	* Adds a [job]{@link module:enyo/job} to the job queue. If the current priority
-	* level is higher than this job's priority, this job gets deferred until the
-	* job level drops; if it is lower, this job is run immediately.
-	*
-	* @param {Function} job - The actual {@glossary Function} to execute as the
-	* [job]{@link module:enyo/job}.
-	* @param {Number} priority - The priority of the job.
-	* @param {String} nom - The name of the job for later reference.
-	* @public
-	*/
-	add: function (job, priority, nom) {
-		priority = priority || 5;
-
-		// magic words: low = 3, normal = 5, high = 7
-		priority = utils.isString(priority) ? this._magicWords[priority] : priority;
-
-		// if a job of the same name exists, remove it first (replace it)
-		if(nom){
-			this.remove(nom);
-			this._namedJobs[nom] = priority;
-		}
-
-		// if the job is of higher priority than the current priority level then
-		// there's no point in queueing it
-		if(priority >= this.priorityLevel){
-			job();
-		} else {
-			this._jobs[priority - 1].push({fkt: job, name: nom});
-		}
-	},
-	
-	/**
-	* Will remove the named [job]{@link module:enyo/job} from the queue.
-	*
-	* @param {String} nom - The name of the [job]{@link module:enyo/job} to remove.
-	* @returns {Array} An {@glossary Array} that will contain the removed job if
-	* it was found, or empty if it was not found.
-	* @public
-	*/
-	remove: function (nom) {
-		var jobs = this._jobs[this._namedJobs[nom] - 1];
-		if(jobs){
-			for(var j = jobs.length-1; j >= 0; j--){
-				if(jobs[j].name === nom){
-					return jobs.splice(j, 1);
-				}
-			}
-		}
-	},
-	
-	/**
-	* Adds a new priority level at which jobs will be executed. If it is higher than the
-	* highest current priority, the priority level rises. Newly added jobs below that priority
-	* level are deferred until the priority is removed (i.e., unregistered).
-	*
-	* @param {Number} priority - The priority value to register.
-	* @param {String} id - The name of the priority.
-	* @public
-	*/
-	registerPriority: function(priority, id) {
-		this._priorities[id] = priority;
-		this.setPriorityLevel( Math.max(priority, this.priorityLevel) );
-	},
-	
-	/**
-	* Removes a priority level. If the removed priority was previously the
-	* highest priority, the priority level drops to the next highest priority
-	* and queued jobs with a higher priority are executed.
-	*
-	* @param {String} id - The name of the priority level to remove.
-	* @public
-	*/
-	unregisterPriority: function (id) {
-		var highestPriority = 0;
-
-		// remove priority
-		delete this._priorities[id];
-
-		// find new highest current priority
-		for( var i in this._priorities ){
-			highestPriority = Math.max(highestPriority, this._priorities[i]);
-		}
-
-		this.setPriorityLevel( highestPriority );
-	},
-	
-	/**
-	* Tries to run next job if priority level has dropped.
-	*
-	* @type {module:enyo/ObserverSupport~ObserverSupport~Observer}
-	* @private
-	*/
-	priorityLevelChanged: function (was) {
-		if(was > this.priorityLevel){
-			this._doJob();
-		}
-	},
-	
-	/**
-	* Finds and executes the job of highest priority; in this way, all jobs with priority
-	* greater than or equal to the current level are run, in order of their priority (highest
-	* to lowest).
-	*
-	* @private
-	*/
-	_doJob: function () {
-		var job;
-		// find the job of highest priority above the current priority level
-		// and remove from the job list
-		for (var i = 9; i >= this.priorityLevel; i--){
-			if (this._jobs[i].length) {
-				job = this._jobs[i].shift();
-				break;
-			}
-		}
-
-		// allow other events to pass through
-		if (job) {
-			job.fkt();
-			delete this._namedJobs[job.name];
-			setTimeout(utils.bind(this, '_doJob'), 10);
-		}
-	}
-});
-
-},{'./utils':'enyo/utils','./kind':'enyo/kind','./CoreObject':'enyo/CoreObject'}],'enyo/Store':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./logger':'enyo/logger','./utils':'enyo/utils','./MixinSupport':'enyo/MixinSupport','./ObserverSupport':'enyo/ObserverSupport','./BindingSupport':'enyo/BindingSupport','./ComputedSupport':'enyo/ComputedSupport'}],'enyo/Store':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -9729,7 +9530,206 @@ var Store = kind(
 */
 module.exports = new Store();
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./ModelList':'enyo/ModelList','./EventEmitter':'enyo/EventEmitter','./CoreObject':'enyo/CoreObject'}],'enyo/Async':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./ModelList':'enyo/ModelList','./EventEmitter':'enyo/EventEmitter','./CoreObject':'enyo/CoreObject'}],'enyo/jobs':[function (module,exports,global,require,request){
+require('enyo');
+
+var
+	utils = require('./utils'),
+	kind = require('./kind');
+	
+var CoreObject = require('./CoreObject');
+
+/**
+* The {@link module:enyo/jobs} singleton provides a mechanism for queueing tasks
+* (i.e., functions) for execution in order of priority. The execution of the
+* current job stack may be blocked programmatically by setting a priority
+* level (run level) below which no jobs are executed.
+*
+* At the moment, only {@link module:enyo/Animator~Animator} uses this interface, setting a
+* priority of 4, which blocks all low priority tasks from executing during
+* animations. To maintain backward compatibility, jobs are assigned a priority
+* of 5 by default; thus they are not blocked by animations.
+*
+* Normally, application code will not use `enyo/jobs` directly, but will
+* instead use the [job()]{@link module:enyo/Component~Component#job} method of
+* {@link module:enyo/Component~Component}.
+*
+* @module enyo/jobs
+* @public
+*/
+module.exports = kind.singleton(
+	/** @lends module:enyo/jobs */ {
+	
+	kind: CoreObject,
+	
+	/**
+	* @private
+	*/
+	published: /** @lends module:enyo/jobs~jobs */ {
+		
+		/**
+		* The current priority level.
+		*
+		* @type {Number}
+		* @default 0
+		* @public
+		*/
+		priorityLevel: 0
+	},
+	
+	/**
+	* Prioritized by index.
+	*
+	* @private
+	*/
+	_jobs: [ [], [], [], [], [], [], [], [], [], [] ],
+	
+	/**
+	* @private
+	*/
+	_priorities: {},
+	
+	/**
+	* @private
+	*/
+	_namedJobs: {},
+	
+	/**
+	* @private
+	*/
+	_magicWords: {
+		'low': 3,
+		'normal': 5,
+		'high': 7
+	},
+	
+	/**
+	* Adds a [job]{@link module:enyo/job} to the job queue. If the current priority
+	* level is higher than this job's priority, this job gets deferred until the
+	* job level drops; if it is lower, this job is run immediately.
+	*
+	* @param {Function} job - The actual {@glossary Function} to execute as the
+	* [job]{@link module:enyo/job}.
+	* @param {Number} priority - The priority of the job.
+	* @param {String} nom - The name of the job for later reference.
+	* @public
+	*/
+	add: function (job, priority, nom) {
+		priority = priority || 5;
+
+		// magic words: low = 3, normal = 5, high = 7
+		priority = utils.isString(priority) ? this._magicWords[priority] : priority;
+
+		// if a job of the same name exists, remove it first (replace it)
+		if(nom){
+			this.remove(nom);
+			this._namedJobs[nom] = priority;
+		}
+
+		// if the job is of higher priority than the current priority level then
+		// there's no point in queueing it
+		if(priority >= this.priorityLevel){
+			job();
+		} else {
+			this._jobs[priority - 1].push({fkt: job, name: nom});
+		}
+	},
+	
+	/**
+	* Will remove the named [job]{@link module:enyo/job} from the queue.
+	*
+	* @param {String} nom - The name of the [job]{@link module:enyo/job} to remove.
+	* @returns {Array} An {@glossary Array} that will contain the removed job if
+	* it was found, or empty if it was not found.
+	* @public
+	*/
+	remove: function (nom) {
+		var jobs = this._jobs[this._namedJobs[nom] - 1];
+		if(jobs){
+			for(var j = jobs.length-1; j >= 0; j--){
+				if(jobs[j].name === nom){
+					return jobs.splice(j, 1);
+				}
+			}
+		}
+	},
+	
+	/**
+	* Adds a new priority level at which jobs will be executed. If it is higher than the
+	* highest current priority, the priority level rises. Newly added jobs below that priority
+	* level are deferred until the priority is removed (i.e., unregistered).
+	*
+	* @param {Number} priority - The priority value to register.
+	* @param {String} id - The name of the priority.
+	* @public
+	*/
+	registerPriority: function(priority, id) {
+		this._priorities[id] = priority;
+		this.setPriorityLevel( Math.max(priority, this.priorityLevel) );
+	},
+	
+	/**
+	* Removes a priority level. If the removed priority was previously the
+	* highest priority, the priority level drops to the next highest priority
+	* and queued jobs with a higher priority are executed.
+	*
+	* @param {String} id - The name of the priority level to remove.
+	* @public
+	*/
+	unregisterPriority: function (id) {
+		var highestPriority = 0;
+
+		// remove priority
+		delete this._priorities[id];
+
+		// find new highest current priority
+		for( var i in this._priorities ){
+			highestPriority = Math.max(highestPriority, this._priorities[i]);
+		}
+
+		this.setPriorityLevel( highestPriority );
+	},
+	
+	/**
+	* Tries to run next job if priority level has dropped.
+	*
+	* @type {module:enyo/ObserverSupport~ObserverSupport~Observer}
+	* @private
+	*/
+	priorityLevelChanged: function (was) {
+		if(was > this.priorityLevel){
+			this._doJob();
+		}
+	},
+	
+	/**
+	* Finds and executes the job of highest priority; in this way, all jobs with priority
+	* greater than or equal to the current level are run, in order of their priority (highest
+	* to lowest).
+	*
+	* @private
+	*/
+	_doJob: function () {
+		var job;
+		// find the job of highest priority above the current priority level
+		// and remove from the job list
+		for (var i = 9; i >= this.priorityLevel; i--){
+			if (this._jobs[i].length) {
+				job = this._jobs[i].shift();
+				break;
+			}
+		}
+
+		// allow other events to pass through
+		if (job) {
+			job.fkt();
+			delete this._namedJobs[job.name];
+			setTimeout(utils.bind(this, '_doJob'), 10);
+		}
+	}
+});
+
+},{'./utils':'enyo/utils','./kind':'enyo/kind','./CoreObject':'enyo/CoreObject'}],'enyo/Async':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -10438,7 +10438,937 @@ module.exports = kind.singleton({
 	}
 });
 
-},{'./kind':'enyo/kind','./CoreObject':'enyo/CoreObject','./animation':'enyo/animation'}],'enyo/Component':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./CoreObject':'enyo/CoreObject','./animation':'enyo/animation'}],'enyo/Model':[function (module,exports,global,require,request){
+require('enyo');
+
+/**
+* Contains the declaration for the {@link module:enyo/Model~Model} kind.
+* @module enyo/Model
+*/
+
+var
+	kind = require('./kind'),
+	utils = require('./utils');
+
+var
+	ObserverSupport = require('./ObserverSupport'),
+	ComputedSupport = require('./ComputedSupport'),
+	BindingSupport = require('./BindingSupport'),
+	EventEmitter = require('./EventEmitter'),
+	StateSupport = require('./StateSupport'),
+	ModelList = require('./ModelList'),
+	Source = require('./Source'),
+	States = require('./States'),
+	Store = require('./Store');
+
+/**
+* This is only necessary because of the order in which mixins are applied.
+*
+* @class
+* @private
+*/
+var BaseModel = kind({
+	kind: null,
+	mixins: [ObserverSupport, ComputedSupport, BindingSupport, EventEmitter, StateSupport]
+});
+
+/**
+* The event emitted when [attributes]{@link module:enyo/Model~Model#attributes} have been modified.
+* The event [object]{@glossary Object} will consist of key/value pairs of attributes
+* that changed and their new values.
+*
+* @event module:enyo/Model~Model#change
+* @type {Object}
+* @public
+*/
+
+/**
+* The default configurable [options]{@link module:enyo/Model~Model#options} used in certain API methods
+* of {@link module:enyo/Model~Model}.
+*
+* @typedef {Object} module:enyo/Model~Model~Options
+* @property {Boolean} silent=false - Keep events and notifications from being emitted.
+* @property {Boolean} commit=false - Immediately [commit]{@link module:enyo/Model~Model#commit} changes
+*	after they have occurred. Also note that, if `true`, when the [model]{@link module:enyo/Model~Model}
+* is [destroyed]{@link module:enyo/Model~Model#destroy}, it will also be destroyed via any
+* [sources]{@link module:enyo/Model~Model#source} it has.
+* @property {Boolean} parse=false - During initialization, [parse]{@link module:enyo/Model~Model#parse}
+*	any given [attributes]{@link module:enyo/Model~Model#attributes}; after
+*	[fetching]{@link module:enyo/Model~Model#fetch}, parse the data before calling
+* [set()]{@link module:enyo/Model~Model#set}.
+* @property {Boolean} fetch=false - Automatically call [fetch()]{@link module:enyo/Model~Model#fetch}
+*	during initialization.
+*/
+
+/**
+* The configurable options for [fetch()]{@link module:enyo/Model~Model#fetch},
+* [commit()]{@link module:enyo/Model~Model#commit}, and [destroy()]{@link module:enyo/Model~Model#destroy}.
+*
+* @typedef {module:enyo/Model~Model~Options} module:enyo/Model~Model~ActionOptions
+* @property {module:enyo/Model~Model~Success} success - The callback executed upon successful
+*	completion.
+* @property {module:enyo/Model~Model~Error} error - The callback executed upon a failed attempt.
+*/
+
+/**
+* @callback module:enyo/Model~Model~Success
+* @param {module:enyo/Model~Model} model - The [model]{@link module:enyo/Model~Model} that is returning successfully.
+* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to the action method
+*	that is returning successfully.
+* @param {*} res - The result, if any, returned by the [source]{@link module:enyo/Source~Source} that
+*	executed it.
+* @param {String} source - The name of the [source]{@link module:enyo/Model~Model#source} that has
+* returned successfully.
+*/
+
+/**
+* @callback module:enyo/Model~Model~Error
+* @param {module:enyo/Model~Model} model - The model that is returning an error.
+* @param {String} action - The name of the action that failed, one of `'FETCHING'`,
+*	`'COMMITTING'`, or `'DESTROYING'`.
+* @param {module:enyo/Model~Model~Options} opts - The original options passed to the action method
+*	that is returning an error.
+* @param {*} res - The result, if any, returned by the [source]{@link module:enyo/Source~Source} that
+*	executed it.
+* @param {String} source - The name of the [source]{@link module:enyo/Model~Model#source} that has
+*	returned an error.
+*/
+
+/**
+* An [object]{@glossary Object} used to represent and maintain state. Usually,
+* an {@link module:enyo/Model~Model} is used to expose data to the view layer. It keeps logic
+* related to the data (retrieving it, updating it, storing it, etc.) out of the
+* view, and the view can automatically update based on changes in the model.
+* Models have the ability to work with other data layer [kinds]{@glossary kind}
+* to provide more sophisticated implementations.
+*
+* Models have [bindable]{@link module:enyo/BindingSupport~BindingSupport}
+* [attributes]{@link module:enyo/Model~Model#attributes}. Models differs from other
+* bindable kinds in that attribute values are proxied from an internal
+* [hash]{@glossary Object} instead of being set on the target properties
+* directly.
+*
+* @see module:enyo/Store~Store
+* @see module:enyo/Collection~Collection
+* @see module:enyo/RelationalModel~RelationalModel
+* @see module:enyo/ModelController~ModelController
+* @class Model
+* @mixes module:enyo/ObserverSupport~ObserverSupport
+* @mixes module:enyo/ComputedSupport~ComputedSupport
+* @mixes module:enyo/BindingSupport~BindingSupport
+* @mixes module:enyo/EventEmitter
+* @mixes module:enyo/StateSupport~StateSupport
+* @public
+*/
+var Model = module.exports = kind(
+	/** @lends module:enyo/Model~Model.prototype */ {
+
+	name: 'enyo.Model',
+
+	/**
+	* @private
+	*/
+	kind: BaseModel,
+
+	/**
+	* @private
+	*/
+
+
+	/**
+	* Used by various [sources]{@link module:enyo/Model~Model#source} as part of the
+	* [URI]{@glossary URI} from which they may be [fetched]{@link module:enyo/Model~Model#fetch},
+	* [committed]{@link module:enyo/Model~Model#commit}, or [destroyed]{@link module:enyo/Model~Model#destroy}.
+	* Some sources may use this property in other ways.
+	*
+	* @see module:enyo/Model~Model#getUrl
+	* @see module:enyo/Source~Source
+	* @see module:enyo/AjaxSource~AjaxSource
+	* @see module:enyo/JsonpSource~JsonpSource
+	* @type {String}
+	* @default ''
+	* @public
+	*/
+	url: '',
+
+	/**
+	* Implement this method to be used by [sources]{@link module:enyo/Model~Model#source} to
+	* dynamically derive the [URI]{@glossary URI} from which they may be
+	* [fetched]{@link module:enyo/Model~Model#fetch}, [committed]{@link module:enyo/Model~Model#commit},
+	* or [destroyed]{@link module:enyo/Model~Model#destroy}. Some sources may use this
+	* property in other ways. Note that, if this method is implemented, the
+	* [url]{@link module:enyo/Model~Model#url} will not be used.
+	*
+	* @see module:enyo/Model~Model#url
+	* @see module:enyo/Source~Source
+	* @see module:enyo/AjaxSource~AjaxSource
+	* @see module:enyo/JsonpSource~JsonpSource
+	* @type {Function}
+	* @default null
+	* @virtual
+	* @public
+	*/
+	getUrl: null,
+
+	/**
+	* The [hash]{@glossary Object} of properties proxied by this [model]{@link module:enyo/Model~Model}.
+	* If defined on a [subkind]{@glossary subkind}, it may be assigned default values and
+	* all instances will share its default structure. If no attributes are defined, an
+	* empty [hash]{@glossary Object} will be assigned during initialization. It is not
+	* necessary to pre-define the structure of a model; depending on the model's complexity,
+	* pre-defining the structure may possibly hinder performance.
+	*
+	* It should also be noted that calls to [get()]{@link module:enyo/Model~Model#get} or
+	* [set()]{@link module:enyo/Model~Model#set} will access and modify this property. This includes
+	* the values to which (or from which) [bindings]{@link module:enyo/BindingSupport~BindingSupport} are bound.
+	*
+	* @type {Object}
+	* @default null
+	* @public
+	*/
+	attributes: null,
+
+	/**
+	* The [source(s)]{@link module:enyo/Source~Source} to use when [fetching]{@link module:enyo/Model~Model#fetch},
+	* [committing]{@link module:enyo/Model~Model#commit}, or [destroying]{@link module:enyo/Model~Model#destroy}.
+	* Any method that uses sources may override this default value in its configuration
+	* options. This value may be a [string]{@glossary String}, an
+	* [Array]{@glossary Array} of strings, an instance of {@link module:enyo/Source~Source}, or an
+	* array of `enyo/Source` instances.
+	*
+	* @see module:enyo/Source~Source
+	* @see module:enyo/Model~Model#fetch
+	* @see module:enyo/Model~Model#commit
+	* @see module:enyo/Model~Model#destroy
+	* @type {(String|String[]|module:enyo/Source~Source|module:enyo/Source~Source[])}
+	* @default null
+	* @public
+	*/
+	source: null,
+
+	/**
+	* These [keys]{@glossary Object.keys} will be the only
+	* [attributes]{@link module:enyo/Model~Model#attributes} included if the
+	* [model]{@link module:enyo/Model~Model} is [committed]{@link module:enyo/Model~Model#commit}. This
+	* directly modifies the result of calling [raw()]{@link module:enyo/Model~Model#raw}. If
+	* not defined, all keys from the [attributes]{@link module:enyo/Model~Model#attributes}
+	* [hash]{@glossary Object} will be used.
+	*
+	* @see module:enyo/Model~Model#raw
+	* @see module:enyo/Model~Model#toJSON
+	* @type {String[]}
+	* @default null
+	* @public
+	*/
+	includeKeys: null,
+
+	/**
+	* The inheritable default configuration options. These specify the behavior of particular
+	* API features of {@link module:enyo/Model~Model}. Any method that uses these options may override
+	* the default values in its own configuration options. Note that setting an
+	* [options hash]{@glossary Object} on a [subkind]{@glossary subkind} will result in
+	* the new values' being merged with--not replacing--the
+	* [superkind's]{@glossary superkind} own `options`.
+	*
+	* @type {module:enyo/Model~Model~Options}
+	* @public
+	*/
+	options: {
+		silent: false,
+		commit: false,
+		parse: false,
+		fetch: false
+	},
+
+	/**
+	* The current [state(s)]{@link module:enyo/States} possessed by the [model]{@link module:enyo/Model~Model}.
+	* There are limitations as to which state(s) the model may possess at any given time.
+	* By default, a model is [NEW]{@link module:enyo/States#NEW} and [CLEAN]{@link module:enyo/States#CLEAN}.
+	* Note that this is **not** a [bindable]{@link module:enyo/BindingSupport~BindingSupport} property.
+	*
+	* @see module:enyo/States~States
+	* @see {@link module:enyo/StateSupport~StateSupport}
+	* @type {module:enyo/States~States}
+	* @readonly
+	* @public
+	*/
+	status: States.NEW | States.CLEAN,
+
+	/**
+	* The unique attribute by which the [model]{@link module:enyo/Model~Model} may be indexed. The
+	* attribute's value must be unique across all instances of the specific model
+	* [kind]{@glossary kind}
+	*
+	* @type {String}
+	* @default 'id'
+	* @public
+	*/
+	primaryKey: 'id',
+
+	/**
+	* Inspects and restructures incoming data prior to [setting]{@link module:enyo/Model~Model#set} it on
+	* the [model]{@link module:enyo/Model~Model}. While this method may be called directly, it is most
+	* often used via the [parse]{@link module:enyo/Model~Model~Options#parse} option and executed
+	* automatically, either during initialization or when [fetched]{@link module:enyo/Model~Model#fetch}
+	* (or, in some cases, both). This is a virtual method and must be provided to suit a
+	* given implementation's needs.
+	*
+	* @see module:enyo/Model~Model~Options#parse
+	* @param {*} data - The incoming data that may need to be restructured or reduced prior to
+	*	being [set]{@link module:enyo/Model~Model#set} on the [model]{@link module:enyo/Model~Model}.
+	* @returns {Object} The [hash]{@glossary Object} to apply to the
+	*	model via [set()]{@link module:enyo/Model~Model#set}.
+	* @virtual
+	* @public
+	*/
+	parse: function (data) {
+		return data;
+	},
+
+	/**
+	* Returns an [Object]{@glossary Object} that represents the underlying data structure
+	* of the [model]{@link module:enyo/Model~Model}. This is dependent on the current
+	* [attributes]{@link module:enyo/Model~Model#attributes} as well as the
+	* [includeKeys]{@link module:enyo/Model~Model#includeKeys}.
+	* [Computed properties]{@link module:enyo/ComputedSupport} are **never** included.
+	*
+	* @see module:enyo/Model~Model#includeKeys
+	* @see module:enyo/Model~Model#attributes
+	* @returns {Object} The formatted [hash]{@glossary Object} representing the underlying
+	*	data structure of the [model]{@link module:enyo/Model~Model}.
+	* @public
+	*/
+	raw: function () {
+		var inc = this.includeKeys
+			, attrs = this.attributes
+			, keys = inc || Object.keys(attrs)
+			, cpy = inc? utils.only(inc, attrs): utils.clone(attrs);
+		keys.forEach(function (key) {
+			var ent = this.get(key);
+			if (typeof ent == 'function') cpy[key] = ent.call(this);
+			else if (ent && ent.raw) cpy[key] = ent.raw();
+			else cpy[key] = ent;
+		}, this);
+		return cpy;
+	},
+
+	/**
+	* Returns the [JSON]{@glossary JSON} serializable [raw()]{@link module:enyo/Model~Model#raw} output
+	* of the [model]{@link module:enyo/Model~Model}. Will automatically be executed by
+	* [JSON.parse()]{@glossary JSON.parse}.
+	*
+	* @see module:enyo/Model~Model#raw
+	* @returns {Object} The return value of [raw()]{@link module:enyo/Model~Model#raw}.
+	* @public
+	*/
+	toJSON: function () {
+
+		// @NOTE: Because this is supposed to return a JSON parse-able object
+		return this.raw();
+	},
+
+	/**
+	* Restores an [attribute]{@link module:enyo/Model~Model#attributes} to its previous value. If no
+	* attribute is specified, all previous values will be restored.
+	*
+	* @see module:enyo/Model~Model#set
+	* @see module:enyo/Model~Model#previous
+	* @param {String} [prop] - The [attribute]{@link module:enyo/Model~Model#attributes} to
+	*	[restore]{@link module:enyo/Model~Model#restore}. If not provided, all attributes will be
+	* restored to their previous values.
+	* @returns {this} The callee for chaining.
+	* @public
+	*/
+	restore: function (prop) {
+
+		// we ensure that the property is forcibly notified (when possible) to ensure that
+		// bindings or other observers will know it returned to that value
+		if (prop) this.set(prop, this.previous[prop], {force: true});
+		else this.set(this.previous);
+
+		return this;
+	},
+
+	/**
+	* Commits the [model]{@link module:enyo/Model~Model} to a [source or sources]{@link module:enyo/Model~Model#source}.
+	* A model cannot be [committed]{@link module:enyo/Model~Model#commit} if it is in an
+	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
+	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
+	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
+	* [COMMITTING]{@link module:enyo/States#COMMITTING} flag to the model's
+	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it will
+	* remove this flag (even if it fails).
+	*
+	* @see module:enyo/Model~Model#committed
+	* @see module:enyo/Model~Model#status
+	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
+	* @returns {this} The callee for chaining.
+	* @public
+	*/
+	commit: function (opts) {
+		var options,
+			source,
+			it = this;
+
+		// if the current status is not one of the error or busy states we can continue
+		if (!(this.status & (States.ERROR | States.BUSY))) {
+
+			// if there were options passed in we copy them quickly so that we can hijack
+			// the success and error methods while preserving the originals to use later
+			options = opts ? utils.clone(opts, true) : {};
+
+			// make sure we keep track of how many sources we're requesting
+			source = options.source || this.source;
+			if (source && ((source instanceof Array) || source === true)) {
+				this._waiting = source.length ? source.slice() : Object.keys(Source.sources);
+			}
+
+			options.success = function (source, res) {
+				it.committed(opts, res, source);
+			};
+
+			options.error = function (source, res) {
+				it.errored('COMMITTING', opts, res, source);
+			};
+
+			// set the state
+			this.status = this.status | States.COMMITTING;
+
+			// now pass this on to the source to execute as it sees fit
+			Source.execute('commit', this, options);
+		} else this.errored(this.status, opts);
+
+		return this;
+	},
+
+	/**
+	* Fetches the [model]{@link module:enyo/Model~Model} from a
+	* [source or sources]{@link module:enyo/Model~Model#source}. A model cannot be
+	* [fetched]{@link module:enyo/Model~Model#fetch} if it is in an
+	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
+	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
+	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
+	* [FETCHING]{@link module:enyo/States#FETCHING} flag to the model's
+	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it will
+	* remove this flag (even if it fails).
+	*
+	* @see module:enyo/Model~Model#fetched
+	* @see module:enyo/Model~Model#status
+	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
+	* @returns {this} The callee for chaining.
+	* @public
+	*/
+	fetch: function (opts) {
+		var options,
+			source,
+			it = this;
+
+		// if the current status is not one of the error or busy states we can continue
+		if (!(this.status & (States.ERROR | States.BUSY))) {
+
+			// if there were options passed in we copy them quickly so that we can hijack
+			// the success and error methods while preserving the originals to use later
+			options = opts ? utils.clone(opts, true) : {};
+
+			// make sure we keep track of how many sources we're requesting
+			source = options.source || this.source;
+			if (source && ((source instanceof Array) || source === true)) {
+				this._waiting = source.length ? source.slice() : Object.keys(Source.sources);
+			}
+
+			options.success = function (source, res) {
+				it.fetched(opts, res, source);
+			};
+
+			options.error = function (source, res) {
+				it.errored('FETCHING', opts, res, source);
+			};
+
+			// set the state
+			this.status = this.status | States.FETCHING;
+
+			// now pass this on to the source to execute as it sees fit
+			Source.execute('fetch', this, options);
+		} else this.errored(this.status, opts);
+
+		return this;
+	},
+
+	/**
+	* Destroys the [model]{@link module:enyo/Model~Model}. By default, the model will only
+	* be [destroyed]{@glossary destroy} in the client. To execute with a
+	* [source or sources]{@link module:enyo/Model~Model#source}, either the
+	* [commit default option]{@link module:enyo/Model~Model#options} must be `true` or a
+	* `source` property must be explicitly provided in the `opts` parameter.
+	* A model cannot be destroyed (using a source) if it is in an
+	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError})
+	* or [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
+	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
+	* [DESTROYING]{@link module:enyo/States#DESTROYING} flag to the model's
+	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it
+	* will remove this flag (even if it fails).
+	*
+	* @see module:enyo/Model~Model#status
+	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
+	* @returns {this} The callee for chaining.
+	* @public
+	*/
+	destroy: function (opts) {
+		var options = opts ? utils.mixin({}, [this.options, opts]) : this.options,
+			it = this,
+			idx;
+
+		// this becomes an (potentially) async operation if we are committing this destroy
+		// to a source and its kind of tricky to figure out because there are several ways
+		// it could be flagged to do this
+
+		if (options.commit || options.source) {
+
+			// if the current status is not one of the error states we can continue
+			if (!(this.status & (States.ERROR | States.BUSY))) {
+
+				// remap to the originals
+				options = opts ? utils.clone(opts, true) : {};
+
+				options.success = function (source, res) {
+
+					if (it._waiting) {
+						idx = it._waiting.findIndex(function (ln) {
+							return (ln instanceof Source ? ln.name : ln) == source;
+						});
+						if (idx > -1) it._waiting.splice(idx, 1);
+						if (!it._waiting.length) it._waiting = null;
+					}
+
+					// continue the operation this time with commit false explicitly
+					if (!it._waiting) {
+						options.commit = options.source = null;
+						it.destroy(options);
+					}
+					if (opts && opts.success) opts.success(this, opts, res, source);
+				};
+
+				options.error = function (source, res) {
+
+					if (it._waiting) {
+						idx = it._waiting.findIndex(function (ln) {
+							return (ln instanceof Source ? ln.name : ln) == source;
+						});
+						if (idx > -1) it._waiting.splice(idx, 1);
+						if (!it._waiting.length) it._waiting = null;
+					}
+
+					// continue the operation this time with commit false explicitly
+					if (!it._waiting) {
+						options.commit = options.source = null;
+						it.destroy(options);
+					}
+
+					// we don't bother setting the error state if we aren't waiting because it
+					// will be cleared to DESTROYED and it would be pointless
+					else this.errored('DESTROYING', opts, res, source);
+				};
+
+				this.status = this.status | States.DESTROYING;
+
+				Source.execute('destroy', this, options);
+			} else if (this.status & States.ERROR) this.errored(this.status, opts);
+
+			// we don't allow the destroy to take place and we don't forcibly break-down
+			// the collection errantly so there is an opportuniy to resolve the issue
+			// before we lose access to the collection's content!
+			return this;
+		}
+
+
+		// we flag this early so objects that receive an event and process it
+		// can optionally check this to support faster cleanup in some cases
+		// e.g. Collection/Store don't need to remove listeners because it will
+		// be done in a much quicker way already
+		this.destroyed = true;
+		this.status = States.DESTROYED;
+		this.unsilence(true).emit('destroy');
+		this.removeAllListeners();
+		this.removeAllObservers();
+
+		// if this does not have the the batching flag (that would be set by a collection)
+		// then we need to do the default of removing it from the store
+		if (!opts || !opts.batching) this.store.remove(this);
+	},
+
+	/**
+	* Retrieves the value for the given property or path. If the property is a
+	* [computed property]{@link module:enyo/ComputedSupport}, then it will return
+	* that value; otherwise, it will attempt to retrieve the value from the
+	* [attributes hash]{@link module:enyo/Model~Model#attributes}.
+	*
+	* @param {String} path - The property to retrieve.
+	* @returns {*} The value for the requested property or path, or `undefined` if
+	* it cannot be found or does not exist.
+	* @public
+	*/
+	get: function (path) {
+		return this.isComputed(path) ? this._getComputed(path) : this.attributes[path];
+	},
+
+	/**
+	* Sets the requested `path` or [hash]{@glossary Object} of properties on the
+	* [model]{@link module:enyo/Model~Model}. Properties are applied to the
+	* [attributes hash]{@link module:enyo/Model~Model#attributes} and are retrievable via
+	* [get()]{@link module:enyo/Model~Model#get}. If properties were updated and the `silent`
+	* option is not `true`, this method will emit a `change` event, as well as
+	* individual [notifications]{@link module:enyo/ObserverSupport~ObserverSupport.notify} for the
+	* properties that were modified.
+	*
+	* @fires module:enyo/Model~Model#change
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport}
+	* @see {@link module:enyo/BindingSupport~BindingSupport}
+	* @param {(String|Object)} path - Either the property name or a [hash]{@glossary Object}
+	*	of properties and values to set.
+	* @param {(*|module:enyo/Model~Options)} is If `path` is a [string]{@glossary String},
+	* this should be the value to set for the given property; otherwise, it should be
+	* an optional hash of available [configuration options]{@link module:enyo/Model~Model~Options}.
+	* @param {module:enyo/Model~Options} [opts] - If `path` is a string, this should be the
+	* optional hash of available configuration options; otherwise, it will not be used.
+	* @returns {this} The callee for chaining.
+	* @public
+	*/
+	set: function (path, is, opts) {
+		if (!this.destroyed) {
+
+			var attrs = this.attributes,
+				options = this.options,
+				changed,
+				incoming,
+				force,
+				silent,
+				key,
+				value,
+				commit,
+				fetched;
+
+			// the default case for this setter is accepting an object of key->value pairs
+			// to apply to the model in which case the second parameter is the optional
+			// configuration hash
+			if (typeof path == 'object') {
+				incoming = path;
+				opts = opts || is;
+			}
+
+			// otherwise in order to have a single path here we flub it so it will keep on
+			// going as expected
+			else {
+				incoming = {};
+				incoming[path] = is;
+			}
+
+			// to maintain backward compatibility with the old setters that allowed the third
+			// parameter to be a boolean to indicate whether or not to force notification of
+			// change even if there was any
+			if (opts === true) {
+				force = true;
+				opts = {};
+			}
+
+			opts = opts ? utils.mixin({}, [options, opts]) : options;
+			silent = opts.silent;
+			force = force || opts.force;
+			commit = opts.commit;
+			fetched = opts.fetched;
+
+			for (key in incoming) {
+				value = incoming[key];
+
+				if (value !== attrs[key] || force) {
+					// to ensure we have an object to work with
+					// note that we check inside this loop so we don't have to examine keys
+					// later only the local variable changed
+					changed = this.changed || (this.changed = {});
+					//store the previous attr value
+					this.previous[key] = attrs[key];
+					//set new value
+					changed[key] = attrs[key] = value;
+				}
+			}
+
+			if (changed) {
+
+				// we add dirty as a value of the status but clear the CLEAN bit if it
+				// was set - this would allow it to be in the ERROR state and NEW and DIRTY
+				if (!fetched) this.status = (this.status | States.DIRTY) & ~States.CLEAN;
+
+				if (!silent) this.emit('change', changed, this);
+
+				if (commit && !fetched) this.commit(opts);
+
+				// reset value so subsequent changes won't be added to this change-set
+				this.changed = null;
+			}
+		}
+
+		return this;
+	},
+
+	/**
+	* A bit of hackery to facade the normal [getter]{@link module:enyo/ComputedSupport~ComputedSupport#get}. Note that
+	* we pass an arbitrary super-method that automatically returns `undefined`, which is
+	* consistent with this use case and its intended purpose.
+	*
+	* @private
+	*/
+	_getComputed: ComputedSupport.get.fn(function () { return undefined; }),
+
+	/**
+	* Initializes the [model]{@link module:enyo/Model~Model}. Unlike some methods, the parameters are not
+	* interchangeable. If you are not using a particular (optional) parameter, pass in `null`.
+	*
+	* @param {Object} [attrs] - Optionally initialize the [model]{@link module:enyo/Model~Model} with some
+	*	[attributes]{@link module:enyo/Model~Model#attributes}.
+	* @param {Object} [props] - Properties to apply directly to the [model]{@link module:enyo/Model~Model} and
+	*	not the [attributes hash]{@link module:enyo/Model~Model#attributes}. If these properties contain an
+	*	`options` property (a [hash]{@glossary Object}) it will be merged with existing
+	*	[options]{@link module:enyo/Model~Model#options}.
+	* @param {module:enyo/Model~Model~Options} [opts] - This is a one-time [options hash]{@link module:enyo/Model~Model~Options} that
+	*	is only used during initialization and not applied as defaults.
+	* @public
+	*/
+	constructor: function (attrs, props, opts) {
+
+		// in cases where there is an options hash provided in the _props_ param
+		// we need to integrate it manually...
+		if (props && props.options) {
+			this.options = utils.mixin({}, [this.options, props.options]);
+			delete props.options;
+		}
+
+		// the _opts_ parameter is a one-hit options hash it does not leave
+		// behind its values as default options...
+		opts = opts? utils.mixin({}, [this.options, opts]): this.options;
+
+		// go ahead and mix all of the properties in
+		props && utils.mixin(this, props);
+
+		var noAdd = opts.noAdd
+			, commit = opts.commit
+			, parse = opts.parse
+			, fetch = this.options.fetch
+			, defaults;
+
+		// defaults = this.defaults && (typeof this.defaults == 'function'? this.defaults(attrs, opts): this.defaults);
+		defaults = this.defaults && typeof this.defaults == 'function'? this.defaults(attrs, opts): null;
+
+		// ensure we have a unique identifier that could potentially
+		// be used in remote systems
+		this.euid = this.euid || utils.uid('m');
+
+		// if necessary we need to parse the incoming attributes
+		attrs = attrs? parse? this.parse(attrs): attrs: null;
+
+		// ensure we have the updated attributes
+		this.attributes = this.attributes? defaults? utils.mixin({}, [defaults, this.attributes]): utils.clone(this.attributes, true): defaults? utils.clone(defaults, true): {};
+		attrs && utils.mixin(this.attributes, attrs);
+		this.previous = utils.clone(this.attributes);
+
+		// now we need to ensure we have a store and register with it
+		this.store = this.store || Store;
+
+		// @TODO: The idea here is that when batch instancing records a collection
+		// should be intelligent enough to avoid doing each individually or in some
+		// cases it may be useful to have a record that is never added to a store?
+		if (!noAdd) this.store.add(this, opts);
+
+		commit && this.commit();
+		fetch && this.fetch();
+	},
+
+	/**
+	* Overloaded. We funnel arbitrary notification updates through here, as this
+	* is faster than using the built-in notification updates for batch operations.
+	*
+	* @private
+	*/
+	emit: kind.inherit(function (sup) {
+		return function (e, props) {
+			if (e == 'change' && props && this.isObserving()) {
+				for (var key in props) this.notify(key, this.previous[key], props[key]);
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
+
+	/**
+	* Overloaded to alias the (also overloaded) [emit()]{@link module:enyo/Model~Model#emit} method.
+	*
+	* @private
+	*/
+	triggerEvent: function () {
+		return this.emit.apply(this, arguments);
+	},
+
+	/**
+	* When a [fetch]{@link module:enyo/Model~Model#fetch} has completed successfully, it is returned
+	* to this method. This method handles special and important behavior; it should not be
+	* called directly and, when overloading, care must be taken to ensure that you call
+	* the super-method. This correctly sets the [status]{@link module:enyo/Model~Model#status} and, in
+	* cases where multiple [sources]{@link module:enyo/Model~Model#source} were used, it waits until
+	* all have responded before clearing the [FETCHING]{@link module:enyo/States#FETCHING} flag.
+	* If a [success]{@link module:enyo/Model~Model~Success} callback was provided, it will be called
+	* once for each source.
+	*
+	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to
+	*	[fetch()]{@link module:enyo/Model~Model#fetch}, merged with the defaults.
+	* @param {*} [res] - The result provided from the given [source]{@link module:enyo/Model~Model#source},
+	* if any. This will vary depending on the source.
+	* @param {String} source - The name of the source that has completed successfully.
+	* @public
+	*/
+	fetched: function (opts, res, source) {
+		var idx,
+			options = this.options;
+
+		if (this._waiting) {
+			idx = this._waiting.findIndex(function (ln) {
+				return (ln instanceof Source ? ln.name : ln) == source;
+			});
+			if (idx > -1) this._waiting.splice(idx, 1);
+			if (!this._waiting.length) this._waiting = null;
+		}
+
+		// normalize options so we have values and ensure it knows it was just fetched
+		opts = opts ? utils.mixin({}, [options, opts]) : options;
+		opts.fetched = true;
+
+		// for a special case purge to only use the result sub-tree of the fetched data for
+		// the model attributes
+		if (opts.parse) res = this.parse(res);
+
+		// note this will not add the DIRTY state because it was fetched but also note that it
+		// will not clear the DIRTY flag if it was already DIRTY
+		if (res) this.set(res, opts);
+
+		// clear the FETCHING and NEW state (if it was NEW) we do not set it as dirty as this
+		// action alone doesn't warrant a dirty flag that would need to be set in the set method
+		if (!this._waiting) this.status = this.status & ~(States.FETCHING | States.NEW);
+
+		// now look for an additional success callback
+		if (opts.success) opts.success(this, opts, res, source);
+	},
+
+	/**
+	* When a [commit]{@link module:enyo/Model~Model#commit} has completed successfully, it is returned
+	* to this method. This method handles special and important behavior; it should not be
+	* called directly and, when overloading, care must be taken to ensure that you call the
+	* super-method. This correctly sets the [status]{@link module:enyo/Model~Model#status} and, in cases
+	* where multiple [sources]{@link module:enyo/Model~Model#source} were used, it waits until all have
+	* responded before clearing the [COMMITTING]{@link module:enyo/States#COMMITTING} flag. If a
+	* [success]{@link module:enyo/Model~Model~Success} callback was provided, it will be called once for
+	* each source.
+	*
+	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to
+	*	[commit()]{@link module:enyo/Model~Model#commit}, merged with the defaults.
+	* @param {*} [res] - The result provided from the given [source]{@link module:enyo/Model~Model#source},
+	* if any. This will vary depending on the source.
+	* @param {String} source - The name of the source that has completed successfully.
+	* @public
+	*/
+	committed: function (opts, res, source) {
+		var idx;
+
+		if (this._waiting) {
+			idx = this._waiting.findIndex(function (ln) {
+				return (ln instanceof Source ? ln.name : ln) == source;
+			});
+			if (idx > -1) this._waiting.splice(idx, 1);
+			if (!this._waiting.length) this._waiting = null;
+		}
+
+		if (!this._waiting) {
+			// we need to clear the COMMITTING bit and DIRTY bit as well as ensure that the
+			// 'previous' hash is whatever the current attributes are
+			this.previous = utils.clone(this.attributes);
+			this.status = (this.status | States.CLEAN) & ~(States.COMMITTING | States.DIRTY);
+		}
+
+		if (opts && opts.success) opts.success(this, opts, res, source);
+	},
+
+	/**
+	* When an action ([fetch()]{@link module:enyo/Model~Model#fetch}, [commit()]{@link module:enyo/Model~Model#commit},
+	* or [destroy()]{@link module:enyo/Model~Model#destroy}) has failed, it will be passed to this method.
+	* This method handles special and important behavior; it should not be called directly
+	* and, when overloading, care must be taken to ensure that you call the super-method.
+	* This correctly sets the [status]{@link module:enyo/Model~Model#status} to the known
+	* [error state]{@link module:enyo/States#ERROR}, or to the
+	* [unknown error state]{@link module:enyo/States#ERROR_UNKNOWN} if it the error state could not
+	* be determined. If an [error callback]{@link module:enyo/Model~Model~Error} was provided, this method
+	* will execute it.
+	*
+	* @see {@link module:enyo/StateSupport~StateSupport#clearError}
+	* @param {String} action - The action (one of `'FETCHING'`, `'COMMITTING'`, or
+	* `'DESTROYING'`) that failed and is now in an [error state]{@link module:enyo/States#ERROR}.
+	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to the `action`
+	* method, merged with the defaults.
+	* @param {*} [res] - The result provided from the given [source]{@link module:enyo/Model~Model#source},
+	* if any. This will vary depending on the source.
+	* @param {String} source - The name of the source that has returned an error.
+	* @public
+	*/
+	errored: function (action, opts, res, source) {
+		var stat,
+			idx;
+
+		// if the error action is a status number then we don't need to update it otherwise
+		// we set it to the known state value
+		if (typeof action == 'string') {
+
+			// all built-in errors will pass this as their values are > 0 but we go ahead and
+			// ensure that no developer used the 0x00 for an error code
+			stat = States['ERROR_' + action];
+		} else stat = action;
+
+		if (isNaN(stat) || (stat & ~States.ERROR)) stat = States.ERROR_UNKNOWN;
+
+		// correctly set the current status and ensure we clear any busy flags
+		this.status = (this.status | stat) & ~States.BUSY;
+
+		if (this._waiting) {
+			idx = this._waiting.findIndex(function (ln) {
+				return (ln instanceof Source ? ln.name : ln) == source;
+			});
+			if (idx > -1) this._waiting.splice(idx, 1);
+			if (!this._waiting.length) this._waiting = null;
+		}
+
+		// we need to check to see if there is an options handler for this error
+		if (opts && opts.error) opts.error(this, action, opts, res, source);
+	}
+
+});
+
+/**
+* @name module:enyo/Model~Model.concat
+* @static
+* @private
+*/
+Model.concat = function (ctor, props) {
+	var proto = ctor.prototype || ctor;
+
+	if (props.options) {
+		proto.options = utils.mixin({}, [proto.options, props.options]);
+		delete props.options;
+	}
+};
+
+/**
+* @private
+*/
+kind.features.push(function (ctor) {
+	if (ctor.prototype instanceof Model) {
+		!Store.models[ctor.prototype.kindName] && (Store.models[ctor.prototype.kindName] = new ModelList());
+	}
+});
+
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./ObserverSupport':'enyo/ObserverSupport','./ComputedSupport':'enyo/ComputedSupport','./BindingSupport':'enyo/BindingSupport','./EventEmitter':'enyo/EventEmitter','./StateSupport':'enyo/StateSupport','./ModelList':'enyo/ModelList','./Source':'enyo/Source','./States':'enyo/States','./Store':'enyo/Store'}],'enyo/Component':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -11636,937 +12566,7 @@ function prefixFromKindName (nom) {
 	return pre;
 }
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./logger':'enyo/logger','./CoreObject':'enyo/CoreObject','./ApplicationSupport':'enyo/ApplicationSupport','./ComponentBindingSupport':'enyo/ComponentBindingSupport','./jobs':'enyo/jobs'}],'enyo/Model':[function (module,exports,global,require,request){
-require('enyo');
-
-/**
-* Contains the declaration for the {@link module:enyo/Model~Model} kind.
-* @module enyo/Model
-*/
-
-var
-	kind = require('./kind'),
-	utils = require('./utils');
-
-var
-	ObserverSupport = require('./ObserverSupport'),
-	ComputedSupport = require('./ComputedSupport'),
-	BindingSupport = require('./BindingSupport'),
-	EventEmitter = require('./EventEmitter'),
-	StateSupport = require('./StateSupport'),
-	ModelList = require('./ModelList'),
-	Source = require('./Source'),
-	States = require('./States'),
-	Store = require('./Store');
-
-/**
-* This is only necessary because of the order in which mixins are applied.
-*
-* @class
-* @private
-*/
-var BaseModel = kind({
-	kind: null,
-	mixins: [ObserverSupport, ComputedSupport, BindingSupport, EventEmitter, StateSupport]
-});
-
-/**
-* The event emitted when [attributes]{@link module:enyo/Model~Model#attributes} have been modified.
-* The event [object]{@glossary Object} will consist of key/value pairs of attributes
-* that changed and their new values.
-*
-* @event module:enyo/Model~Model#change
-* @type {Object}
-* @public
-*/
-
-/**
-* The default configurable [options]{@link module:enyo/Model~Model#options} used in certain API methods
-* of {@link module:enyo/Model~Model}.
-*
-* @typedef {Object} module:enyo/Model~Model~Options
-* @property {Boolean} silent=false - Keep events and notifications from being emitted.
-* @property {Boolean} commit=false - Immediately [commit]{@link module:enyo/Model~Model#commit} changes
-*	after they have occurred. Also note that, if `true`, when the [model]{@link module:enyo/Model~Model}
-* is [destroyed]{@link module:enyo/Model~Model#destroy}, it will also be destroyed via any
-* [sources]{@link module:enyo/Model~Model#source} it has.
-* @property {Boolean} parse=false - During initialization, [parse]{@link module:enyo/Model~Model#parse}
-*	any given [attributes]{@link module:enyo/Model~Model#attributes}; after
-*	[fetching]{@link module:enyo/Model~Model#fetch}, parse the data before calling
-* [set()]{@link module:enyo/Model~Model#set}.
-* @property {Boolean} fetch=false - Automatically call [fetch()]{@link module:enyo/Model~Model#fetch}
-*	during initialization.
-*/
-
-/**
-* The configurable options for [fetch()]{@link module:enyo/Model~Model#fetch},
-* [commit()]{@link module:enyo/Model~Model#commit}, and [destroy()]{@link module:enyo/Model~Model#destroy}.
-*
-* @typedef {module:enyo/Model~Model~Options} module:enyo/Model~Model~ActionOptions
-* @property {module:enyo/Model~Model~Success} success - The callback executed upon successful
-*	completion.
-* @property {module:enyo/Model~Model~Error} error - The callback executed upon a failed attempt.
-*/
-
-/**
-* @callback module:enyo/Model~Model~Success
-* @param {module:enyo/Model~Model} model - The [model]{@link module:enyo/Model~Model} that is returning successfully.
-* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to the action method
-*	that is returning successfully.
-* @param {*} res - The result, if any, returned by the [source]{@link module:enyo/Source~Source} that
-*	executed it.
-* @param {String} source - The name of the [source]{@link module:enyo/Model~Model#source} that has
-* returned successfully.
-*/
-
-/**
-* @callback module:enyo/Model~Model~Error
-* @param {module:enyo/Model~Model} model - The model that is returning an error.
-* @param {String} action - The name of the action that failed, one of `'FETCHING'`,
-*	`'COMMITTING'`, or `'DESTROYING'`.
-* @param {module:enyo/Model~Model~Options} opts - The original options passed to the action method
-*	that is returning an error.
-* @param {*} res - The result, if any, returned by the [source]{@link module:enyo/Source~Source} that
-*	executed it.
-* @param {String} source - The name of the [source]{@link module:enyo/Model~Model#source} that has
-*	returned an error.
-*/
-
-/**
-* An [object]{@glossary Object} used to represent and maintain state. Usually,
-* an {@link module:enyo/Model~Model} is used to expose data to the view layer. It keeps logic
-* related to the data (retrieving it, updating it, storing it, etc.) out of the
-* view, and the view can automatically update based on changes in the model.
-* Models have the ability to work with other data layer [kinds]{@glossary kind}
-* to provide more sophisticated implementations.
-*
-* Models have [bindable]{@link module:enyo/BindingSupport~BindingSupport}
-* [attributes]{@link module:enyo/Model~Model#attributes}. Models differs from other
-* bindable kinds in that attribute values are proxied from an internal
-* [hash]{@glossary Object} instead of being set on the target properties
-* directly.
-*
-* @see module:enyo/Store~Store
-* @see module:enyo/Collection~Collection
-* @see module:enyo/RelationalModel~RelationalModel
-* @see module:enyo/ModelController~ModelController
-* @class Model
-* @mixes module:enyo/ObserverSupport~ObserverSupport
-* @mixes module:enyo/ComputedSupport~ComputedSupport
-* @mixes module:enyo/BindingSupport~BindingSupport
-* @mixes module:enyo/EventEmitter
-* @mixes module:enyo/StateSupport~StateSupport
-* @public
-*/
-var Model = module.exports = kind(
-	/** @lends module:enyo/Model~Model.prototype */ {
-
-	name: 'enyo.Model',
-
-	/**
-	* @private
-	*/
-	kind: BaseModel,
-
-	/**
-	* @private
-	*/
-
-
-	/**
-	* Used by various [sources]{@link module:enyo/Model~Model#source} as part of the
-	* [URI]{@glossary URI} from which they may be [fetched]{@link module:enyo/Model~Model#fetch},
-	* [committed]{@link module:enyo/Model~Model#commit}, or [destroyed]{@link module:enyo/Model~Model#destroy}.
-	* Some sources may use this property in other ways.
-	*
-	* @see module:enyo/Model~Model#getUrl
-	* @see module:enyo/Source~Source
-	* @see module:enyo/AjaxSource~AjaxSource
-	* @see module:enyo/JsonpSource~JsonpSource
-	* @type {String}
-	* @default ''
-	* @public
-	*/
-	url: '',
-
-	/**
-	* Implement this method to be used by [sources]{@link module:enyo/Model~Model#source} to
-	* dynamically derive the [URI]{@glossary URI} from which they may be
-	* [fetched]{@link module:enyo/Model~Model#fetch}, [committed]{@link module:enyo/Model~Model#commit},
-	* or [destroyed]{@link module:enyo/Model~Model#destroy}. Some sources may use this
-	* property in other ways. Note that, if this method is implemented, the
-	* [url]{@link module:enyo/Model~Model#url} will not be used.
-	*
-	* @see module:enyo/Model~Model#url
-	* @see module:enyo/Source~Source
-	* @see module:enyo/AjaxSource~AjaxSource
-	* @see module:enyo/JsonpSource~JsonpSource
-	* @type {Function}
-	* @default null
-	* @virtual
-	* @public
-	*/
-	getUrl: null,
-
-	/**
-	* The [hash]{@glossary Object} of properties proxied by this [model]{@link module:enyo/Model~Model}.
-	* If defined on a [subkind]{@glossary subkind}, it may be assigned default values and
-	* all instances will share its default structure. If no attributes are defined, an
-	* empty [hash]{@glossary Object} will be assigned during initialization. It is not
-	* necessary to pre-define the structure of a model; depending on the model's complexity,
-	* pre-defining the structure may possibly hinder performance.
-	*
-	* It should also be noted that calls to [get()]{@link module:enyo/Model~Model#get} or
-	* [set()]{@link module:enyo/Model~Model#set} will access and modify this property. This includes
-	* the values to which (or from which) [bindings]{@link module:enyo/BindingSupport~BindingSupport} are bound.
-	*
-	* @type {Object}
-	* @default null
-	* @public
-	*/
-	attributes: null,
-
-	/**
-	* The [source(s)]{@link module:enyo/Source~Source} to use when [fetching]{@link module:enyo/Model~Model#fetch},
-	* [committing]{@link module:enyo/Model~Model#commit}, or [destroying]{@link module:enyo/Model~Model#destroy}.
-	* Any method that uses sources may override this default value in its configuration
-	* options. This value may be a [string]{@glossary String}, an
-	* [Array]{@glossary Array} of strings, an instance of {@link module:enyo/Source~Source}, or an
-	* array of `enyo/Source` instances.
-	*
-	* @see module:enyo/Source~Source
-	* @see module:enyo/Model~Model#fetch
-	* @see module:enyo/Model~Model#commit
-	* @see module:enyo/Model~Model#destroy
-	* @type {(String|String[]|module:enyo/Source~Source|module:enyo/Source~Source[])}
-	* @default null
-	* @public
-	*/
-	source: null,
-
-	/**
-	* These [keys]{@glossary Object.keys} will be the only
-	* [attributes]{@link module:enyo/Model~Model#attributes} included if the
-	* [model]{@link module:enyo/Model~Model} is [committed]{@link module:enyo/Model~Model#commit}. This
-	* directly modifies the result of calling [raw()]{@link module:enyo/Model~Model#raw}. If
-	* not defined, all keys from the [attributes]{@link module:enyo/Model~Model#attributes}
-	* [hash]{@glossary Object} will be used.
-	*
-	* @see module:enyo/Model~Model#raw
-	* @see module:enyo/Model~Model#toJSON
-	* @type {String[]}
-	* @default null
-	* @public
-	*/
-	includeKeys: null,
-
-	/**
-	* The inheritable default configuration options. These specify the behavior of particular
-	* API features of {@link module:enyo/Model~Model}. Any method that uses these options may override
-	* the default values in its own configuration options. Note that setting an
-	* [options hash]{@glossary Object} on a [subkind]{@glossary subkind} will result in
-	* the new values' being merged with--not replacing--the
-	* [superkind's]{@glossary superkind} own `options`.
-	*
-	* @type {module:enyo/Model~Model~Options}
-	* @public
-	*/
-	options: {
-		silent: false,
-		commit: false,
-		parse: false,
-		fetch: false
-	},
-
-	/**
-	* The current [state(s)]{@link module:enyo/States} possessed by the [model]{@link module:enyo/Model~Model}.
-	* There are limitations as to which state(s) the model may possess at any given time.
-	* By default, a model is [NEW]{@link module:enyo/States#NEW} and [CLEAN]{@link module:enyo/States#CLEAN}.
-	* Note that this is **not** a [bindable]{@link module:enyo/BindingSupport~BindingSupport} property.
-	*
-	* @see module:enyo/States~States
-	* @see {@link module:enyo/StateSupport~StateSupport}
-	* @type {module:enyo/States~States}
-	* @readonly
-	* @public
-	*/
-	status: States.NEW | States.CLEAN,
-
-	/**
-	* The unique attribute by which the [model]{@link module:enyo/Model~Model} may be indexed. The
-	* attribute's value must be unique across all instances of the specific model
-	* [kind]{@glossary kind}
-	*
-	* @type {String}
-	* @default 'id'
-	* @public
-	*/
-	primaryKey: 'id',
-
-	/**
-	* Inspects and restructures incoming data prior to [setting]{@link module:enyo/Model~Model#set} it on
-	* the [model]{@link module:enyo/Model~Model}. While this method may be called directly, it is most
-	* often used via the [parse]{@link module:enyo/Model~Model~Options#parse} option and executed
-	* automatically, either during initialization or when [fetched]{@link module:enyo/Model~Model#fetch}
-	* (or, in some cases, both). This is a virtual method and must be provided to suit a
-	* given implementation's needs.
-	*
-	* @see module:enyo/Model~Model~Options#parse
-	* @param {*} data - The incoming data that may need to be restructured or reduced prior to
-	*	being [set]{@link module:enyo/Model~Model#set} on the [model]{@link module:enyo/Model~Model}.
-	* @returns {Object} The [hash]{@glossary Object} to apply to the
-	*	model via [set()]{@link module:enyo/Model~Model#set}.
-	* @virtual
-	* @public
-	*/
-	parse: function (data) {
-		return data;
-	},
-
-	/**
-	* Returns an [Object]{@glossary Object} that represents the underlying data structure
-	* of the [model]{@link module:enyo/Model~Model}. This is dependent on the current
-	* [attributes]{@link module:enyo/Model~Model#attributes} as well as the
-	* [includeKeys]{@link module:enyo/Model~Model#includeKeys}.
-	* [Computed properties]{@link module:enyo/ComputedSupport} are **never** included.
-	*
-	* @see module:enyo/Model~Model#includeKeys
-	* @see module:enyo/Model~Model#attributes
-	* @returns {Object} The formatted [hash]{@glossary Object} representing the underlying
-	*	data structure of the [model]{@link module:enyo/Model~Model}.
-	* @public
-	*/
-	raw: function () {
-		var inc = this.includeKeys
-			, attrs = this.attributes
-			, keys = inc || Object.keys(attrs)
-			, cpy = inc? utils.only(inc, attrs): utils.clone(attrs);
-		keys.forEach(function (key) {
-			var ent = this.get(key);
-			if (typeof ent == 'function') cpy[key] = ent.call(this);
-			else if (ent && ent.raw) cpy[key] = ent.raw();
-			else cpy[key] = ent;
-		}, this);
-		return cpy;
-	},
-
-	/**
-	* Returns the [JSON]{@glossary JSON} serializable [raw()]{@link module:enyo/Model~Model#raw} output
-	* of the [model]{@link module:enyo/Model~Model}. Will automatically be executed by
-	* [JSON.parse()]{@glossary JSON.parse}.
-	*
-	* @see module:enyo/Model~Model#raw
-	* @returns {Object} The return value of [raw()]{@link module:enyo/Model~Model#raw}.
-	* @public
-	*/
-	toJSON: function () {
-
-		// @NOTE: Because this is supposed to return a JSON parse-able object
-		return this.raw();
-	},
-
-	/**
-	* Restores an [attribute]{@link module:enyo/Model~Model#attributes} to its previous value. If no
-	* attribute is specified, all previous values will be restored.
-	*
-	* @see module:enyo/Model~Model#set
-	* @see module:enyo/Model~Model#previous
-	* @param {String} [prop] - The [attribute]{@link module:enyo/Model~Model#attributes} to
-	*	[restore]{@link module:enyo/Model~Model#restore}. If not provided, all attributes will be
-	* restored to their previous values.
-	* @returns {this} The callee for chaining.
-	* @public
-	*/
-	restore: function (prop) {
-
-		// we ensure that the property is forcibly notified (when possible) to ensure that
-		// bindings or other observers will know it returned to that value
-		if (prop) this.set(prop, this.previous[prop], {force: true});
-		else this.set(this.previous);
-
-		return this;
-	},
-
-	/**
-	* Commits the [model]{@link module:enyo/Model~Model} to a [source or sources]{@link module:enyo/Model~Model#source}.
-	* A model cannot be [committed]{@link module:enyo/Model~Model#commit} if it is in an
-	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
-	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
-	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
-	* [COMMITTING]{@link module:enyo/States#COMMITTING} flag to the model's
-	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it will
-	* remove this flag (even if it fails).
-	*
-	* @see module:enyo/Model~Model#committed
-	* @see module:enyo/Model~Model#status
-	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
-	* @returns {this} The callee for chaining.
-	* @public
-	*/
-	commit: function (opts) {
-		var options,
-			source,
-			it = this;
-
-		// if the current status is not one of the error or busy states we can continue
-		if (!(this.status & (States.ERROR | States.BUSY))) {
-
-			// if there were options passed in we copy them quickly so that we can hijack
-			// the success and error methods while preserving the originals to use later
-			options = opts ? utils.clone(opts, true) : {};
-
-			// make sure we keep track of how many sources we're requesting
-			source = options.source || this.source;
-			if (source && ((source instanceof Array) || source === true)) {
-				this._waiting = source.length ? source.slice() : Object.keys(Source.sources);
-			}
-
-			options.success = function (source, res) {
-				it.committed(opts, res, source);
-			};
-
-			options.error = function (source, res) {
-				it.errored('COMMITTING', opts, res, source);
-			};
-
-			// set the state
-			this.status = this.status | States.COMMITTING;
-
-			// now pass this on to the source to execute as it sees fit
-			Source.execute('commit', this, options);
-		} else this.errored(this.status, opts);
-
-		return this;
-	},
-
-	/**
-	* Fetches the [model]{@link module:enyo/Model~Model} from a
-	* [source or sources]{@link module:enyo/Model~Model#source}. A model cannot be
-	* [fetched]{@link module:enyo/Model~Model#fetch} if it is in an
-	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
-	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
-	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
-	* [FETCHING]{@link module:enyo/States#FETCHING} flag to the model's
-	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it will
-	* remove this flag (even if it fails).
-	*
-	* @see module:enyo/Model~Model#fetched
-	* @see module:enyo/Model~Model#status
-	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
-	* @returns {this} The callee for chaining.
-	* @public
-	*/
-	fetch: function (opts) {
-		var options,
-			source,
-			it = this;
-
-		// if the current status is not one of the error or busy states we can continue
-		if (!(this.status & (States.ERROR | States.BUSY))) {
-
-			// if there were options passed in we copy them quickly so that we can hijack
-			// the success and error methods while preserving the originals to use later
-			options = opts ? utils.clone(opts, true) : {};
-
-			// make sure we keep track of how many sources we're requesting
-			source = options.source || this.source;
-			if (source && ((source instanceof Array) || source === true)) {
-				this._waiting = source.length ? source.slice() : Object.keys(Source.sources);
-			}
-
-			options.success = function (source, res) {
-				it.fetched(opts, res, source);
-			};
-
-			options.error = function (source, res) {
-				it.errored('FETCHING', opts, res, source);
-			};
-
-			// set the state
-			this.status = this.status | States.FETCHING;
-
-			// now pass this on to the source to execute as it sees fit
-			Source.execute('fetch', this, options);
-		} else this.errored(this.status, opts);
-
-		return this;
-	},
-
-	/**
-	* Destroys the [model]{@link module:enyo/Model~Model}. By default, the model will only
-	* be [destroyed]{@glossary destroy} in the client. To execute with a
-	* [source or sources]{@link module:enyo/Model~Model#source}, either the
-	* [commit default option]{@link module:enyo/Model~Model#options} must be `true` or a
-	* `source` property must be explicitly provided in the `opts` parameter.
-	* A model cannot be destroyed (using a source) if it is in an
-	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError})
-	* or [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
-	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
-	* [DESTROYING]{@link module:enyo/States#DESTROYING} flag to the model's
-	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it
-	* will remove this flag (even if it fails).
-	*
-	* @see module:enyo/Model~Model#status
-	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
-	* @returns {this} The callee for chaining.
-	* @public
-	*/
-	destroy: function (opts) {
-		var options = opts ? utils.mixin({}, [this.options, opts]) : this.options,
-			it = this,
-			idx;
-
-		// this becomes an (potentially) async operation if we are committing this destroy
-		// to a source and its kind of tricky to figure out because there are several ways
-		// it could be flagged to do this
-
-		if (options.commit || options.source) {
-
-			// if the current status is not one of the error states we can continue
-			if (!(this.status & (States.ERROR | States.BUSY))) {
-
-				// remap to the originals
-				options = opts ? utils.clone(opts, true) : {};
-
-				options.success = function (source, res) {
-
-					if (it._waiting) {
-						idx = it._waiting.findIndex(function (ln) {
-							return (ln instanceof Source ? ln.name : ln) == source;
-						});
-						if (idx > -1) it._waiting.splice(idx, 1);
-						if (!it._waiting.length) it._waiting = null;
-					}
-
-					// continue the operation this time with commit false explicitly
-					if (!it._waiting) {
-						options.commit = options.source = null;
-						it.destroy(options);
-					}
-					if (opts && opts.success) opts.success(this, opts, res, source);
-				};
-
-				options.error = function (source, res) {
-
-					if (it._waiting) {
-						idx = it._waiting.findIndex(function (ln) {
-							return (ln instanceof Source ? ln.name : ln) == source;
-						});
-						if (idx > -1) it._waiting.splice(idx, 1);
-						if (!it._waiting.length) it._waiting = null;
-					}
-
-					// continue the operation this time with commit false explicitly
-					if (!it._waiting) {
-						options.commit = options.source = null;
-						it.destroy(options);
-					}
-
-					// we don't bother setting the error state if we aren't waiting because it
-					// will be cleared to DESTROYED and it would be pointless
-					else this.errored('DESTROYING', opts, res, source);
-				};
-
-				this.status = this.status | States.DESTROYING;
-
-				Source.execute('destroy', this, options);
-			} else if (this.status & States.ERROR) this.errored(this.status, opts);
-
-			// we don't allow the destroy to take place and we don't forcibly break-down
-			// the collection errantly so there is an opportuniy to resolve the issue
-			// before we lose access to the collection's content!
-			return this;
-		}
-
-
-		// we flag this early so objects that receive an event and process it
-		// can optionally check this to support faster cleanup in some cases
-		// e.g. Collection/Store don't need to remove listeners because it will
-		// be done in a much quicker way already
-		this.destroyed = true;
-		this.status = States.DESTROYED;
-		this.unsilence(true).emit('destroy');
-		this.removeAllListeners();
-		this.removeAllObservers();
-
-		// if this does not have the the batching flag (that would be set by a collection)
-		// then we need to do the default of removing it from the store
-		if (!opts || !opts.batching) this.store.remove(this);
-	},
-
-	/**
-	* Retrieves the value for the given property or path. If the property is a
-	* [computed property]{@link module:enyo/ComputedSupport}, then it will return
-	* that value; otherwise, it will attempt to retrieve the value from the
-	* [attributes hash]{@link module:enyo/Model~Model#attributes}.
-	*
-	* @param {String} path - The property to retrieve.
-	* @returns {*} The value for the requested property or path, or `undefined` if
-	* it cannot be found or does not exist.
-	* @public
-	*/
-	get: function (path) {
-		return this.isComputed(path) ? this._getComputed(path) : this.attributes[path];
-	},
-
-	/**
-	* Sets the requested `path` or [hash]{@glossary Object} of properties on the
-	* [model]{@link module:enyo/Model~Model}. Properties are applied to the
-	* [attributes hash]{@link module:enyo/Model~Model#attributes} and are retrievable via
-	* [get()]{@link module:enyo/Model~Model#get}. If properties were updated and the `silent`
-	* option is not `true`, this method will emit a `change` event, as well as
-	* individual [notifications]{@link module:enyo/ObserverSupport~ObserverSupport.notify} for the
-	* properties that were modified.
-	*
-	* @fires module:enyo/Model~Model#change
-	* @see {@link module:enyo/ObserverSupport~ObserverSupport}
-	* @see {@link module:enyo/BindingSupport~BindingSupport}
-	* @param {(String|Object)} path - Either the property name or a [hash]{@glossary Object}
-	*	of properties and values to set.
-	* @param {(*|module:enyo/Model~Options)} is If `path` is a [string]{@glossary String},
-	* this should be the value to set for the given property; otherwise, it should be
-	* an optional hash of available [configuration options]{@link module:enyo/Model~Model~Options}.
-	* @param {module:enyo/Model~Options} [opts] - If `path` is a string, this should be the
-	* optional hash of available configuration options; otherwise, it will not be used.
-	* @returns {this} The callee for chaining.
-	* @public
-	*/
-	set: function (path, is, opts) {
-		if (!this.destroyed) {
-
-			var attrs = this.attributes,
-				options = this.options,
-				changed,
-				incoming,
-				force,
-				silent,
-				key,
-				value,
-				commit,
-				fetched;
-
-			// the default case for this setter is accepting an object of key->value pairs
-			// to apply to the model in which case the second parameter is the optional
-			// configuration hash
-			if (typeof path == 'object') {
-				incoming = path;
-				opts = opts || is;
-			}
-
-			// otherwise in order to have a single path here we flub it so it will keep on
-			// going as expected
-			else {
-				incoming = {};
-				incoming[path] = is;
-			}
-
-			// to maintain backward compatibility with the old setters that allowed the third
-			// parameter to be a boolean to indicate whether or not to force notification of
-			// change even if there was any
-			if (opts === true) {
-				force = true;
-				opts = {};
-			}
-
-			opts = opts ? utils.mixin({}, [options, opts]) : options;
-			silent = opts.silent;
-			force = force || opts.force;
-			commit = opts.commit;
-			fetched = opts.fetched;
-
-			for (key in incoming) {
-				value = incoming[key];
-
-				if (value !== attrs[key] || force) {
-					// to ensure we have an object to work with
-					// note that we check inside this loop so we don't have to examine keys
-					// later only the local variable changed
-					changed = this.changed || (this.changed = {});
-					//store the previous attr value
-					this.previous[key] = attrs[key];
-					//set new value
-					changed[key] = attrs[key] = value;
-				}
-			}
-
-			if (changed) {
-
-				// we add dirty as a value of the status but clear the CLEAN bit if it
-				// was set - this would allow it to be in the ERROR state and NEW and DIRTY
-				if (!fetched) this.status = (this.status | States.DIRTY) & ~States.CLEAN;
-
-				if (!silent) this.emit('change', changed, this);
-
-				if (commit && !fetched) this.commit(opts);
-
-				// reset value so subsequent changes won't be added to this change-set
-				this.changed = null;
-			}
-		}
-
-		return this;
-	},
-
-	/**
-	* A bit of hackery to facade the normal [getter]{@link module:enyo/ComputedSupport~ComputedSupport#get}. Note that
-	* we pass an arbitrary super-method that automatically returns `undefined`, which is
-	* consistent with this use case and its intended purpose.
-	*
-	* @private
-	*/
-	_getComputed: ComputedSupport.get.fn(function () { return undefined; }),
-
-	/**
-	* Initializes the [model]{@link module:enyo/Model~Model}. Unlike some methods, the parameters are not
-	* interchangeable. If you are not using a particular (optional) parameter, pass in `null`.
-	*
-	* @param {Object} [attrs] - Optionally initialize the [model]{@link module:enyo/Model~Model} with some
-	*	[attributes]{@link module:enyo/Model~Model#attributes}.
-	* @param {Object} [props] - Properties to apply directly to the [model]{@link module:enyo/Model~Model} and
-	*	not the [attributes hash]{@link module:enyo/Model~Model#attributes}. If these properties contain an
-	*	`options` property (a [hash]{@glossary Object}) it will be merged with existing
-	*	[options]{@link module:enyo/Model~Model#options}.
-	* @param {module:enyo/Model~Model~Options} [opts] - This is a one-time [options hash]{@link module:enyo/Model~Model~Options} that
-	*	is only used during initialization and not applied as defaults.
-	* @public
-	*/
-	constructor: function (attrs, props, opts) {
-
-		// in cases where there is an options hash provided in the _props_ param
-		// we need to integrate it manually...
-		if (props && props.options) {
-			this.options = utils.mixin({}, [this.options, props.options]);
-			delete props.options;
-		}
-
-		// the _opts_ parameter is a one-hit options hash it does not leave
-		// behind its values as default options...
-		opts = opts? utils.mixin({}, [this.options, opts]): this.options;
-
-		// go ahead and mix all of the properties in
-		props && utils.mixin(this, props);
-
-		var noAdd = opts.noAdd
-			, commit = opts.commit
-			, parse = opts.parse
-			, fetch = this.options.fetch
-			, defaults;
-
-		// defaults = this.defaults && (typeof this.defaults == 'function'? this.defaults(attrs, opts): this.defaults);
-		defaults = this.defaults && typeof this.defaults == 'function'? this.defaults(attrs, opts): null;
-
-		// ensure we have a unique identifier that could potentially
-		// be used in remote systems
-		this.euid = this.euid || utils.uid('m');
-
-		// if necessary we need to parse the incoming attributes
-		attrs = attrs? parse? this.parse(attrs): attrs: null;
-
-		// ensure we have the updated attributes
-		this.attributes = this.attributes? defaults? utils.mixin({}, [defaults, this.attributes]): utils.clone(this.attributes, true): defaults? utils.clone(defaults, true): {};
-		attrs && utils.mixin(this.attributes, attrs);
-		this.previous = utils.clone(this.attributes);
-
-		// now we need to ensure we have a store and register with it
-		this.store = this.store || Store;
-
-		// @TODO: The idea here is that when batch instancing records a collection
-		// should be intelligent enough to avoid doing each individually or in some
-		// cases it may be useful to have a record that is never added to a store?
-		if (!noAdd) this.store.add(this, opts);
-
-		commit && this.commit();
-		fetch && this.fetch();
-	},
-
-	/**
-	* Overloaded. We funnel arbitrary notification updates through here, as this
-	* is faster than using the built-in notification updates for batch operations.
-	*
-	* @private
-	*/
-	emit: kind.inherit(function (sup) {
-		return function (e, props) {
-			if (e == 'change' && props && this.isObserving()) {
-				for (var key in props) this.notify(key, this.previous[key], props[key]);
-			}
-			return sup.apply(this, arguments);
-		};
-	}),
-
-	/**
-	* Overloaded to alias the (also overloaded) [emit()]{@link module:enyo/Model~Model#emit} method.
-	*
-	* @private
-	*/
-	triggerEvent: function () {
-		return this.emit.apply(this, arguments);
-	},
-
-	/**
-	* When a [fetch]{@link module:enyo/Model~Model#fetch} has completed successfully, it is returned
-	* to this method. This method handles special and important behavior; it should not be
-	* called directly and, when overloading, care must be taken to ensure that you call
-	* the super-method. This correctly sets the [status]{@link module:enyo/Model~Model#status} and, in
-	* cases where multiple [sources]{@link module:enyo/Model~Model#source} were used, it waits until
-	* all have responded before clearing the [FETCHING]{@link module:enyo/States#FETCHING} flag.
-	* If a [success]{@link module:enyo/Model~Model~Success} callback was provided, it will be called
-	* once for each source.
-	*
-	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to
-	*	[fetch()]{@link module:enyo/Model~Model#fetch}, merged with the defaults.
-	* @param {*} [res] - The result provided from the given [source]{@link module:enyo/Model~Model#source},
-	* if any. This will vary depending on the source.
-	* @param {String} source - The name of the source that has completed successfully.
-	* @public
-	*/
-	fetched: function (opts, res, source) {
-		var idx,
-			options = this.options;
-
-		if (this._waiting) {
-			idx = this._waiting.findIndex(function (ln) {
-				return (ln instanceof Source ? ln.name : ln) == source;
-			});
-			if (idx > -1) this._waiting.splice(idx, 1);
-			if (!this._waiting.length) this._waiting = null;
-		}
-
-		// normalize options so we have values and ensure it knows it was just fetched
-		opts = opts ? utils.mixin({}, [options, opts]) : options;
-		opts.fetched = true;
-
-		// for a special case purge to only use the result sub-tree of the fetched data for
-		// the model attributes
-		if (opts.parse) res = this.parse(res);
-
-		// note this will not add the DIRTY state because it was fetched but also note that it
-		// will not clear the DIRTY flag if it was already DIRTY
-		if (res) this.set(res, opts);
-
-		// clear the FETCHING and NEW state (if it was NEW) we do not set it as dirty as this
-		// action alone doesn't warrant a dirty flag that would need to be set in the set method
-		if (!this._waiting) this.status = this.status & ~(States.FETCHING | States.NEW);
-
-		// now look for an additional success callback
-		if (opts.success) opts.success(this, opts, res, source);
-	},
-
-	/**
-	* When a [commit]{@link module:enyo/Model~Model#commit} has completed successfully, it is returned
-	* to this method. This method handles special and important behavior; it should not be
-	* called directly and, when overloading, care must be taken to ensure that you call the
-	* super-method. This correctly sets the [status]{@link module:enyo/Model~Model#status} and, in cases
-	* where multiple [sources]{@link module:enyo/Model~Model#source} were used, it waits until all have
-	* responded before clearing the [COMMITTING]{@link module:enyo/States#COMMITTING} flag. If a
-	* [success]{@link module:enyo/Model~Model~Success} callback was provided, it will be called once for
-	* each source.
-	*
-	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to
-	*	[commit()]{@link module:enyo/Model~Model#commit}, merged with the defaults.
-	* @param {*} [res] - The result provided from the given [source]{@link module:enyo/Model~Model#source},
-	* if any. This will vary depending on the source.
-	* @param {String} source - The name of the source that has completed successfully.
-	* @public
-	*/
-	committed: function (opts, res, source) {
-		var idx;
-
-		if (this._waiting) {
-			idx = this._waiting.findIndex(function (ln) {
-				return (ln instanceof Source ? ln.name : ln) == source;
-			});
-			if (idx > -1) this._waiting.splice(idx, 1);
-			if (!this._waiting.length) this._waiting = null;
-		}
-
-		if (!this._waiting) {
-			// we need to clear the COMMITTING bit and DIRTY bit as well as ensure that the
-			// 'previous' hash is whatever the current attributes are
-			this.previous = utils.clone(this.attributes);
-			this.status = (this.status | States.CLEAN) & ~(States.COMMITTING | States.DIRTY);
-		}
-
-		if (opts && opts.success) opts.success(this, opts, res, source);
-	},
-
-	/**
-	* When an action ([fetch()]{@link module:enyo/Model~Model#fetch}, [commit()]{@link module:enyo/Model~Model#commit},
-	* or [destroy()]{@link module:enyo/Model~Model#destroy}) has failed, it will be passed to this method.
-	* This method handles special and important behavior; it should not be called directly
-	* and, when overloading, care must be taken to ensure that you call the super-method.
-	* This correctly sets the [status]{@link module:enyo/Model~Model#status} to the known
-	* [error state]{@link module:enyo/States#ERROR}, or to the
-	* [unknown error state]{@link module:enyo/States#ERROR_UNKNOWN} if it the error state could not
-	* be determined. If an [error callback]{@link module:enyo/Model~Model~Error} was provided, this method
-	* will execute it.
-	*
-	* @see {@link module:enyo/StateSupport~StateSupport#clearError}
-	* @param {String} action - The action (one of `'FETCHING'`, `'COMMITTING'`, or
-	* `'DESTROYING'`) that failed and is now in an [error state]{@link module:enyo/States#ERROR}.
-	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to the `action`
-	* method, merged with the defaults.
-	* @param {*} [res] - The result provided from the given [source]{@link module:enyo/Model~Model#source},
-	* if any. This will vary depending on the source.
-	* @param {String} source - The name of the source that has returned an error.
-	* @public
-	*/
-	errored: function (action, opts, res, source) {
-		var stat,
-			idx;
-
-		// if the error action is a status number then we don't need to update it otherwise
-		// we set it to the known state value
-		if (typeof action == 'string') {
-
-			// all built-in errors will pass this as their values are > 0 but we go ahead and
-			// ensure that no developer used the 0x00 for an error code
-			stat = States['ERROR_' + action];
-		} else stat = action;
-
-		if (isNaN(stat) || (stat & ~States.ERROR)) stat = States.ERROR_UNKNOWN;
-
-		// correctly set the current status and ensure we clear any busy flags
-		this.status = (this.status | stat) & ~States.BUSY;
-
-		if (this._waiting) {
-			idx = this._waiting.findIndex(function (ln) {
-				return (ln instanceof Source ? ln.name : ln) == source;
-			});
-			if (idx > -1) this._waiting.splice(idx, 1);
-			if (!this._waiting.length) this._waiting = null;
-		}
-
-		// we need to check to see if there is an options handler for this error
-		if (opts && opts.error) opts.error(this, action, opts, res, source);
-	}
-
-});
-
-/**
-* @name module:enyo/Model~Model.concat
-* @static
-* @private
-*/
-Model.concat = function (ctor, props) {
-	var proto = ctor.prototype || ctor;
-
-	if (props.options) {
-		proto.options = utils.mixin({}, [proto.options, props.options]);
-		delete props.options;
-	}
-};
-
-/**
-* @private
-*/
-kind.features.push(function (ctor) {
-	if (ctor.prototype instanceof Model) {
-		!Store.models[ctor.prototype.kindName] && (Store.models[ctor.prototype.kindName] = new ModelList());
-	}
-});
-
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./ObserverSupport':'enyo/ObserverSupport','./ComputedSupport':'enyo/ComputedSupport','./BindingSupport':'enyo/BindingSupport','./EventEmitter':'enyo/EventEmitter','./StateSupport':'enyo/StateSupport','./ModelList':'enyo/ModelList','./Source':'enyo/Source','./States':'enyo/States','./Store':'enyo/Store'}],'enyo/Ajax':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./logger':'enyo/logger','./CoreObject':'enyo/CoreObject','./ApplicationSupport':'enyo/ApplicationSupport','./ComponentBindingSupport':'enyo/ComponentBindingSupport','./jobs':'enyo/jobs'}],'enyo/Ajax':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -13090,1180 +13090,7 @@ var Signals = module.exports = kind(
 	}
 });
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./Component':'enyo/Component'}],'enyo/MultipleDispatchComponent':[function (module,exports,global,require,request){
-require('enyo');
-
-/**
-* Contains the declaration for the {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent} kind.
-* @module enyo/MultipleDispatchComponent
-*/
-
-var
-	kind = require('./kind');
-
-var
-	Component = require('./Component'),
-	MultipleDispatchSupport = require('./MultipleDispatchSupport');
-
-/**
-* {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent} is a purely abstract
-* {@glossary kind} that simply provides a common ancestor for
-* {@link module:enyo/Component~Component} [objects]{@glossary Object} that need 
-* the [MultipleDispatchSupport]{@link module:enyo/MultipleDispatchSupport~MultipleDispatchSupport}
-* {@glossary mixin}.
-*
-* @class MultipleDispatchComponent
-* @extends module:enyo/Component~Component
-* @mixes module:enyo/MultipleDispatchSupport~MultipleDispatchSupport
-* @public
-*/
-module.exports = kind(
-	/** @lends module:enyo/MultipleDispatchComponent~MultipleDispatchComponent */ {
-
-	/**
-	* @private
-	*/
-	kind: Component,
-
-	/**
-	* @private
-	*/
-	mixins: [MultipleDispatchSupport]
-});
-
-},{'./kind':'enyo/kind','./Component':'enyo/Component','./MultipleDispatchSupport':'enyo/MultipleDispatchSupport'}],'enyo/Animator':[function (module,exports,global,require,request){
-require('enyo');
-
-/**
-* Contains the declaration for the {@link module:enyo/Animator~Animator} kind.
-* @module enyo/Animator
-*/
-
-var
-	kind = require('./kind'),
-	utils = require('./utils'),
-	animation = require('./animation');
-
-var
-	Component = require('./Component'),
-	Jobs = require('./jobs');
-
-/**
-* Fires when an animation step occurs.
-*
-* @event module:enyo/Animator~Animator#onStep
-* @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
-*	propagated the {@glossary event}.
-* @property {Object} event - An [object]{@glossary Object} containing event information.
-* @public
-*/
-
-/**
-* Fires when the animation finishes normally.
-*
-* @event module:enyo/Animator~Animator#onEnd
-* @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
-*	propagated the {@glossary event}.
-* @property {Object} event - An [object]{@glossary Object} containing event information.
-* @public
-*/
-
-/**
-* Fires when the animation is prematurely stopped.
-*
-* @event module:enyo/Animator~Animator#onStop
-* @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
-*	propagated the {@glossary event}.
-* @property {Object} event - An [object]{@glossary Object} containing event information.
-* @public
-*/
-
-/**
-* {@link module:enyo/Animator~Animator} is a basic animation [component]{@link module:enyo/Component~Component}.  Call
-* [play()]{@link module:enyo/Animator~Animator#play} to start the animation. The animation will run for
-* the period (in milliseconds) specified by its [duration]{@link module:enyo/Animator~Animator#duration}
-* property. [onStep]{@link module:enyo/Animator~Animator#onStep} [events]{@glossary event} will
-* fire in quick succession and should be handled to do something based on the
-* [value]{@link module:enyo/Animator~Animator#value} property.
-*
-* The `value` property will progress from [startValue]{@link module:enyo/Animator~Animator#startValue}
-* to [endValue]{@link module:enyo/Animator~Animator#endValue} during the animation, based on the
-* [function]{@glossary Function} referenced by the
-* [easingFunction]{@link module:enyo/Animator~Animator#easingFunction} property.
-*
-* Event handlers may be specified as functions. If specified, the handler function will
-* be used to handle the event directly, without sending the event to its
-* [owner]{@link module:enyo/Component~Component#owner} or [bubbling]{@link module:enyo/Component~Component#bubble} it.
-* The [context]{@link module:enyo/Animator~Animator#context} property may be used to call the supplied
-* event functions in a particular `this` context.
-*
-* During animation, an {@link module:enyo/jobs} priority of 5 is registered to defer low priority
-* tasks.
-*
-* @class Animator
-* @extends module:enyo/Component~Component
-* @public
-*/
-module.exports = kind(
-	/** @lends module:enyo/Animator~Animator.prototype */ {
-
-	/**
-	* A context in which to run the specified {@glossary event} handlers. If this is
-	* not specified or is falsy, then the [global object]{@glossary global} is used.
-	*
-	* @name context
-	* @type {Object}
-	* @default undefined
-	* @memberOf module:enyo/Animator~Animator.prototype
-	* @public
-	*/
-
-	name: 'enyo.Animator',
-
-	/**
-	* @private
-	*/
-	kind: Component,
-
-	/**
-	* @private
-	*/
-	published:
-		/** @lends module:enyo/Animator~Animator.prototype */ {
-
-		/**
-		* Animation duration in milliseconds
-		*
-		* @type {Number}
-		* @default 350
-		* @public
-		*/
-		duration: 350,
-
-		/**
-		* Value of [value]{@link module:enyo/Animator~Animator#value} property at the beginning of an animation.
-		*
-		* @type {Number}
-		* @default 0
-		* @public
-		*/
-		startValue: 0,
-
-		/**
-		* Value of [value]{@link module:enyo/Animator~Animator#value} property at the end of an animation.
-		*
-		* @type {Number}
-		* @default 1
-		* @public
-		*/
-		endValue: 1,
-
-		/**
-		* Node that must be visible in order for the animation to continue. This reference is
-		* destroyed when the animation ceases.
-		*
-		* @type {Object}
-		* @default null
-		* @public
-		*/
-		node: null,
-
-		/**
-		* [Function]{@glossary Function} that determines how the animation progresses from
-		* [startValue]{@link module:enyo/Animator~Animator#startValue} to [endValue]{@link module:enyo/Animator~Animator#endValue}.
-		*
-		* @type {Function}
-		* @default module:enyo/easing~easing.cubicOut
-		* @public
-		*/
-		easingFunction: animation.easing.cubicOut
-	},
-
-	/*
-	* @private
-	*/
-	events: {
-		onStep: '',
-		onEnd: '',
-		onStop: ''
-	},
-
-	/**
-	* @method
-	* @private
-	*/
-	constructed: kind.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this._next = this.bindSafely('next');
-		};
-	}),
-
-	/**
-	* @method
-	* @private
-	*/
-	destroy: kind.inherit(function (sup) {
-		return function() {
-			this.stop();
-			sup.apply(this, arguments);
-		};
-	}),
-
-	/**
-	* Plays the animation.
-	*
-	* @param {Object} props - As a convenience, this [hash]{@glossary Object} will be mixed
-	*	directly into this [object]{@glossary Object}.
-	* @public
-	*/
-	play: function (props) {
-		this.stop();
-		this.reversed = false;
-		if (props) {
-			utils.mixin(this, props);
-		}
-		this.t0 = this.t1 = utils.perfNow();
-		this.value = this.startValue;
-
-		// register this jobPriority to block less urgent tasks from executing
-		Jobs.registerPriority(5, this.id);
-
-		this.job = true;
-		this.next();
-		return this;
-	},
-
-	/**
-	* Stops the animation and fires the associated {@glossary event}.
-	*
-	* @fires module:enyo/Animator~Animator#onStop
-	* @returns {this} The callee for chaining.
-	* @public
-	*/
-	stop: function () {
-		if (this.isAnimating()) {
-			this.cancel();
-			this.fire('onStop');
-			return this;
-		}
-	},
-
-	/**
-	* Stops the animation after a final step
-	*
-	* @returns {this} The callee for chaining
-	* @public
-	*/
-	complete: function () {
-		if (this.isAnimating()) {
-			// set the start time such that the delta will always be greater than the duration
-			// causing the animation to complete immediately
-			this.t0 = -this.duration - 1;
-			this.next();
-		}
-
-		return this;
-	},
-
-	/**
-	* Reverses the direction of a running animation.
-	*
-	* @return {this} The callee for chaining.
-	* @public
-	*/
-	reverse: function () {
-		if (this.isAnimating()) {
-			this.reversed = !this.reversed;
-			var now = this.t1 = utils.perfNow();
-			// adjust start time (t0) to allow for animation done so far to replay
-			var elapsed = now - this.t0;
-			this.t0 = now + elapsed - this.duration;
-			// swap start and end values
-			var startValue = this.startValue;
-			this.startValue = this.endValue;
-			this.endValue = startValue;
-			return this;
-		}
-	},
-
-	/**
-	* Determines whether an animation is in progress.
-	*
-	* @returns {Boolean} `true` if there is an animation currently running; otherwise, `false`.
-	* @private
-	*/
-	isAnimating: function () {
-		return Boolean(this.job);
-	},
-
-	/**
-	* @private
-	*/
-	requestNext: function () {
-		this.job = animation.requestAnimationFrame(this._next, this.node);
-	},
-
-	/**
-	* @private
-	*/
-	cancel: function () {
-		animation.cancelAnimationFrame(this.job);
-		this.node = null;
-		this.job = null;
-
-		// unblock job queue
-		Jobs.unregisterPriority(this.id);
-	},
-
-	/**
-	* @private
-	*/
-	shouldEnd: function () {
-		return (this.dt >= this.duration);
-	},
-
-	/**
-	* Runs the next step of the animation.
-	*
-	* @fires module:enyo/Animator~Animator#onStep
-	* @fires module:enyo/Animator~Animator#onEnd
-	* @private
-	*/
-	next: function () {
-		this.t1 = utils.perfNow();
-		this.dt = this.t1 - this.t0;
-		var args = this.easingFunction.length;
-		var f;
-
-		if (args === 1) {
-			// time independent
-			f = this.fraction = animation.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
-			this.value = this.startValue + f * (this.endValue - this.startValue);
-		} else {
-			this.value = animation.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed,
-				this.dt, this.startValue, (this.endValue - this.startValue));
-		}
-		if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
-			this.value = this.endValue;
-			this.fraction = 1;
-			this.fire('onStep');
-			this.cancel();
-			utils.asyncMethod(this.bindSafely(function() {
-				this.fire('onEnd');
-			}));
-		} else {
-			this.fire('onStep');
-			this.requestNext();
-		}
-	},
-
-	/**
-	* @private
-	*/
-	fire: function (nom) {
-		var fn = this[nom];
-		if (utils.isString(fn)) {
-			this.bubble(nom);
-		} else if (fn) {
-			fn.call(this.context || global, this);
-		}
-	}
-});
-
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./animation':'enyo/animation','./Component':'enyo/Component','./jobs':'enyo/jobs'}],'enyo/ScrollMath':[function (module,exports,global,require,request){
-require('enyo');
-
-/**
-* Contains the declaration for the {@link module:enyo/ScrollMath~ScrollMath} kind.
-* @module enyo/ScrollMath
-*/
-
-var
-	kind = require('./kind'),
-	utils = require('./utils'),
-	platform = require('./platform'),
-	animation = require('./animation');
-
-var
-	Component = require('./Component');
-
-/**
-* Fires when a scrolling action starts.
-*
-* @event module:enyo/ScrollMath~ScrollMath#onScrollStart
-* @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
-*	propagated the {@glossary event}.
-* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
-*	event information.
-* @private
-*/
-
-/**
-* Fires while a scrolling action is in progress.
-*
-* @event module:enyo/ScrollMath~ScrollMath#onScroll
-* @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
-*	propagated the {@glossary event}.
-* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
-*	event information.
-* @private
-*/
-
-/**
-* Fires when a scrolling action stops.
-*
-* @event module:enyo/ScrollMath~ScrollMath#onScrollStop
-* @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
-*	propagated the {@glossary event}.
-* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
-*	event information.
-* @private
-*/
-
-/**
-* {@link module:enyo/ScrollMath~ScrollMath} implements a scrolling dynamics simulation. It is a
-* helper [kind]{@glossary kind} used by other [scroller]{@link module:enyo/Scroller~Scroller}
-* kinds, such as {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy}.
-*
-* `enyo/ScrollMath` is not typically created in application code.
-*
-* @class ScrollMath
-* @protected
-*/
-module.exports = kind(
-	/** @lends module:enyo/ScrollMath~ScrollMath.prototype */ {
-
-	name: 'enyo.ScrollMath',
-
-	/**
-	* @private
-	*/
-	kind: Component,
-
-	/**
-	* @private
-	*/
-	published:
-		/** @lends module:enyo/ScrollMath~ScrollMath.prototype */ {
-
-		/**
-		* Set to `true` to enable vertical scrolling.
-		*
-		* @type {Boolean}
-		* @default true
-		* @private
-		*/
-		vertical: true,
-
-		/**
-		* Set to `true` to enable horizontal scrolling.
-		*
-		* @type {Boolean}
-		* @default true
-		* @private
-		*/
-		horizontal: true
-	},
-
-	/**
-	* @private
-	*/
-	events: {
-		onScrollStart: '',
-		onScroll: '',
-		onScrollStop: '',
-		onStabilize: ''
-	},
-
-	/**
-	* "Spring" damping returns the scroll position to a value inside the boundaries. Lower
-	* values provide faster snapback.
-	*
-	* @private
-	*/
-	kSpringDamping: 0.93,
-
-	/**
-	* "Drag" damping resists dragging the scroll position beyond the boundaries. Lower values
-	* provide more resistance.
-	*
-	* @private
-	*/
-	kDragDamping: 0.5,
-
-	/**
-	* "Friction" damping reduces momentum over time. Lower values provide more friction.
-	*
-	* @private
-	*/
-	kFrictionDamping: 0.97,
-
-	/**
-	* Additional "friction" damping applied when momentum carries the viewport into overscroll.
-	* Lower values provide more friction.
-	*
-	* @private
-	*/
-	kSnapFriction: 0.9,
-
-	/**
-	* Scalar applied to `flick` event velocity.
-	*
-	* @private
-	*/
-	kFlickScalar: 15,
-
-	/**
-	* Limits the maximum allowable flick. On Android > 2, we limit this to prevent compositing
-	* artifacts.
-	*
-	* @private
-	*/
-	kMaxFlick: platform.android > 2 ? 2 : 1e9,
-
-	/**
-	* The value used in [friction()]{@link module:enyo/ScrollMath~ScrollMath#friction} to determine if the delta
-	* (e.g., y - y0) is close enough to zero to consider as zero.
-	*
-	* @private
-	*/
-	kFrictionEpsilon: platform.webos >= 4 ? 1e-1 : 1e-2,
-
-	/**
-	* Top snap boundary, generally `0`.
-	*
-	* @private
-	*/
-	topBoundary: 0,
-
-	/**
-	* Right snap boundary, generally `(viewport width - content width)`.
-	*
-	* @private
-	*/
-	rightBoundary: 0,
-
-	/**
-	* Bottom snap boundary, generally `(viewport height - content height)`.
-	*
-	* @private
-	*/
-	bottomBoundary: 0,
-
-	/**
-	* Left snap boundary, generally `0`.
-	*
-	* @private
-	*/
-	leftBoundary: 0,
-
-	/**
-	* Animation time step.
-	*
-	* @private
-	*/
-	interval: 20,
-
-	/**
-	* Flag to enable frame-based animation; if `false`, time-based animation is used.
-	*
-	* @private
-	*/
-	fixedTime: true,
-
-	/**
-	* Simulation state.
-	*
-	* @private
-	*/
-	x0: 0,
-
-	/**
-	* Simulation state.
-	*
-	* @private
-	*/
-	x: 0,
-
-	/**
-	* Simulation state.
-	*
-	* @private
-	*/
-	y0: 0,
-
-	/**
-	* Simulation state.
-	*
-	* @private
-	*/
-	y: 0,
-
-	/**
-	* @method
-	* @private
-	*/
-	create: kind.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this.boundarySnapshot = {};
-		};
-	}),
-
-	/**
-	* @method
-	* @private
-	*/
-	destroy: kind.inherit(function (sup) {
-		return function() {
-			this.stop();
-			sup.apply(this, arguments);
-		};
-	}),
-
-	/**
-	* Simple Verlet integrator for simulating Newtonian motion.
-	*
-	* @private
-	*/
-	verlet: function () {
-		var x = this.x;
-		this.x += x - this.x0;
-		this.x0 = x;
-		//
-		var y = this.y;
-		this.y += y - this.y0;
-		this.y0 = y;
-	},
-
-	/**
-	* Boundary damping function. Returns damped `value` based on `coeff` on one side of
-	* `origin`.
-	*
-	* @private
-	*/
-	damping: function (val, origin, coeff, sign) {
-		var kEpsilon = 0.5;
-		//
-		// this is basically just value *= coeff (generally, coeff < 1)
-		//
-		// 'sign' and the conditional is to force the damping to only occur
-		// on one side of the origin.
-		//
-		var dv = val - origin;
-		// Force close-to-zero to zero
-		if (Math.abs(dv) < kEpsilon) {
-			return origin;
-		}
-		return val*sign > origin*sign ? coeff * dv + origin : val;
-	},
-
-	/**
-	* Dual-boundary damping function. Returns damped `value` based on `coeff` when exceeding
-	* either boundary.
-	*
-	* @private
-	*/
-	boundaryDamping: function (val, aBoundary, bBoundary, coeff) {
-		return this.damping(this.damping(val, aBoundary, coeff, 1), bBoundary, coeff, -1);
-	},
-
-	/**
-	* Simulation constraints (spring damping occurs here).
-	*
-	* @private
-	*/
-	constrain: function () {
-		var b = this.getDampingBoundaries(),
-			y = this.boundaryDamping(this.y, b.top, b.bottom, this.kSpringDamping),
-			x = this.boundaryDamping(this.x, b.left, b.right, this.kSpringDamping);
-
-		if (y != this.y) {
-			// ensure snapping introduces no velocity, add additional friction
-			this.y0 = y - (this.y - this.y0) * this.kSnapFriction;
-			this.y = y;
-		}
-
-		if (x != this.x) {
-			this.x0 = x - (this.x - this.x0) * this.kSnapFriction;
-			this.x = x;
-		}
-	},
-
-	/**
-	* The friction function.
-	*
-	* @private
-	*/
-	friction: function (ex, ex0, coeff) {
-		// implicit velocity
-		var dp = this[ex] - this[ex0];
-		// let close-to-zero collapse to zero (i.e. smaller than epsilon is considered zero)
-		var c = Math.abs(dp) > this.kFrictionEpsilon ? coeff : 0;
-		// reposition using damped velocity
-		this[ex] = this[ex0] + c * dp;
-	},
-
-	/**
-	* One unit of time for simulation.
-	*
-	* @private
-	*/
-	frame: 10,
-	// piece-wise constraint simulation
-	simulate: function (t) {
-		while (t >= this.frame) {
-			t -= this.frame;
-			if (!this.dragging) {
-				this.constrain();
-			}
-			this.verlet();
-			this.friction('y', 'y0', this.kFrictionDamping);
-			this.friction('x', 'x0', this.kFrictionDamping);
-		}
-		return t;
-	},
-
-	/**
-	* @method
-	* @private
-	*/
-	getDampingBoundaries: function() {
-		return this.haveBoundarySnapshot ?
-			this.boundarySnapshot :
-			{
-				top : this.topBoundary,
-				bottom : this.bottomBoundary,
-				left : this.leftBoundary,
-				right : this.rightBoundary
-			};
-	},
-
-	/**
-	* @method
-	* @private
-	*/
-	takeBoundarySnapshot: function () {
-		var s;
-
-		if (!this.haveBoundarySnapshot) {
-			s = this.boundarySnapshot;
-
-			s.top = this.topBoundary;
-			s.bottom = this.bottomBoundary;
-			s.left = this.leftBoundary;
-			s.right = this.rightBoundary;
-
-			this.haveBoundarySnapshot = true;
-		}
-	},
-
-	/**
-	* @method
-	* @private
-	*/
-	discardBoundarySnapshot: function() {
-		this.haveBoundarySnapshot = false;
-	},
-
-	/**
-	* @fires module:enyo/ScrollMath~ScrollMath#onScrollStop
-	* @private
-	*/
-	animate: function () {
-		this.stop();
-		// time tracking
-		var t0 = utils.perfNow(), t = 0;
-		// delta tracking
-		var x0, y0;
-		// animation handler
-		var fn = this.bindSafely(function() {
-			// wall-clock time
-			var t1 = utils.perfNow();
-			// schedule next frame
-			this.job = animation.requestAnimationFrame(fn);
-			// delta from last wall clock time
-			var dt = t1 - t0;
-			// record the time for next delta
-			t0 = t1;
-			// user drags override animation
-			if (this.dragging) {
-				this.y0 = this.y = this.uy;
-				this.x0 = this.x = this.ux;
-				this.endX = this.endY = null;
-			}
-			// frame-time accumulator
-			// min acceptable time is 16ms (60fps)
-			t += Math.max(16, dt);
-			// prevent snapping to originally desired scroll position if we are in overscroll
-			if (this.isInOverScroll()) {
-				this.endX = null;
-				this.endY = null;
-
-				this.takeBoundarySnapshot();
-			}
-			else {
-				this.discardBoundarySnapshot();
-
-				// alternate fixed-time step strategy:
-				if (this.fixedTime) {
-					t = this.interval;
-				}
-			}
-			// consume some t in simulation
-			t = this.simulate(t);
-			// scroll if we have moved, otherwise the animation is stalled and we can stop
-			if (y0 != this.y || x0 != this.x) {
-				this.scroll();
-			} else if (!this.dragging) {
-				// set final values
-				if (this.endX != null) {
-					this.x = this.x0 = this.endX;
-				}
-				if (this.endY != null) {
-					this.y = this.y0 = this.endY;
-				}
-
-				this.stop();
-				this.scroll();
-				this.doScrollStop();
-
-				this.endX = null;
-				this.endY = null;
-			}
-			y0 = this.y;
-			x0 = this.x;
-		});
-		this.job = animation.requestAnimationFrame(fn);
-	},
-
-	/**
-	* @private
-	*/
-	start: function () {
-		if (!this.job) {
-			this.doScrollStart();
-			this.animate();
-		}
-	},
-
-	/**
-	* @private
-	*/
-	stop: function (fire) {
-		var job = this.job;
-		if (job) {
-			this.job = animation.cancelAnimationFrame(job);
-		}
-		if (fire) {
-			this.doScrollStop();
-
-			this.endX = undefined;
-			this.endY = undefined;
-		}
-	},
-
-	/**
-	* Adjusts the scroll position to be valid, if necessary (e.g., after the scroll contents
-	* have changed).
-	*
-	* @private
-	*/
-	stabilize: function (opts) {
-		var fire = !opts || opts.fire === undefined || opts.fire;
-		var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
-		var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
-		if (y != this.y || x != this.x) {
-			this.y = this.y0 = y;
-			this.x = this.x0 = x;
-			if (fire) {
-				this.doStabilize();
-			}
-		}
-	},
-
-	/**
-	* @private
-	*/
-	startDrag: function (e) {
-		this.dragging = true;
-		//
-		this.my = e.pageY;
-		this.py = this.uy = this.y;
-		//
-		this.mx = e.pageX;
-		this.px = this.ux = this.x;
-	},
-
-	/**
-	* @private
-	*/
-	drag: function (e) {
-		var dy, dx, v, h;
-		if (this.dragging) {
-			v = this.canScrollY();
-			h = this.canScrollX();
-
-			dy = v ? e.pageY - this.my : 0;
-			this.uy = dy + this.py;
-			// provides resistance against dragging into overscroll
-			this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
-			//
-			dx = h ? e.pageX - this.mx : 0;
-			this.ux = dx + this.px;
-			// provides resistance against dragging into overscroll
-			this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);
-			//
-			this.start();
-			return true;
-		}
-	},
-
-	/**
-	* @private
-	*/
-	dragDrop: function () {
-		if (this.dragging && !window.PalmSystem) {
-			var kSimulatedFlickScalar = 0.5;
-			this.y = this.uy;
-			this.y0 = this.y - (this.y - this.y0) * kSimulatedFlickScalar;
-			this.x = this.ux;
-			this.x0 = this.x - (this.x - this.x0) * kSimulatedFlickScalar;
-		}
-		this.dragFinish();
-	},
-
-	/**
-	* @private
-	*/
-	dragFinish: function () {
-		this.dragging = false;
-	},
-
-	/**
-	* @private
-	*/
-	flick: function (e) {
-		var v;
-		if (this.canScrollY()) {
-			v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
-			this.y = this.y0 + v * this.kFlickScalar;
-		}
-		if (this.canScrollX()) {
-			v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
-			this.x = this.x0 + v * this.kFlickScalar;
-		}
-		this.start();
-	},
-
-	/**
-	* TODO: Refine and test newMousewheel, remove this
-	* @private
-	*/
-	mousewheel: function (e) {
-		var dy = this.vertical ? e.wheelDeltaY || (!e.wheelDeltaX ? e.wheelDelta : 0) : 0,
-			dx = this.horizontal ? e.wheelDeltaX : 0,
-			shouldScroll = false;
-		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
-			this.y = this.y0 = this.y0 + dy;
-			shouldScroll = true;
-		}
-		if ((dx > 0 && this.x < this.leftBoundary) || (dx < 0 && this.x > this.rightBoundary)) {
-			this.x = this.x0 = this.x0 + dx;
-			shouldScroll = true;
-		}
-		this.stop(!shouldScroll);
-		if (shouldScroll) {
-			this.start();
-			return true;
-		}
-	},
-
-	/**
-	* @private
-	*/
-	newMousewheel: function (e, opts) {
-		var rtl = opts && opts.rtl,
-			wdY = (e.wheelDeltaY === undefined) ? e.wheelDelta : e.wheelDeltaY,
-			dY = wdY,
-			dX = rtl ? -e.wheelDeltaX : e.wheelDeltaX,
-			canY = this.canScrollY(),
-			canX = this.canScrollX(),
-			shouldScroll = false,
-			m = 2,
-			// TODO: Figure out whether we need to port the configurable
-			// max / multiplier feature from Moonstone's implementation,
-			// and (if so) how
-			// max = 100,
-			scr = this.isScrolling(),
-			ovr = this.isInOverScroll(),
-			refY = (scr && this.endY !== null) ? this.endY : this.y,
-			refX = (scr && this.endX !== null) ? this.endX : this.x,
-			tY = refY,
-			tX = refX;
-
-		if (ovr) {
-			return true;
-		}
-
-		// If we're getting strictly vertical mousewheel events over a scroller that
-		// can only move horizontally, the user is probably using a one-dimensional
-		// mousewheel and would like us to scroll horizontally instead
-		if (dY && !dX && canX && !canY) {
-			dX = dY;
-			dY = 0;
-		}
-
-		if (dY && canY) {
-			tY = -(refY + (dY * m));
-			shouldScroll = true;
-		}
-		if (dX && canX) {
-			tX = -(refX + (dX * m));
-			shouldScroll = true;
-		}
-
-		if (shouldScroll) {
-			this.scrollTo(tX, tY, {allowOverScroll: true});
-			return true;
-		}
-	},
-
-	/**
-	* @fires module:enyo/ScrollMath~ScrollMath#onScroll
-	* @private
-	*/
-	scroll: function () {
-		this.doScroll();
-	},
-
-	// NOTE: Yip/Orvell method for determining scroller instantaneous velocity
-	// FIXME: incorrect if called when scroller is in overscroll region
-	// because does not account for additional overscroll damping.
-
-	/**
-	* Scrolls to the specified position.
-	*
-	* @param {Number} x - The `x` position in pixels.
-	* @param {Number} y - The `y` position in pixels.
-	* @param {Object} opts - TODO: Document. When behavior == 'instant', we skip animation.
-	* @private
-	*/
-	scrollTo: function (x, y, opts) {
-		var animate = !opts || opts.behavior !== 'instant',
-			xSnap = this.xSnapIncrement,
-			ySnap = this.ySnapIncrement,
-			allowOverScroll = opts && opts.allowOverScroll,
-			maxX = Math.abs(Math.min(0, this.rightBoundary)),
-			maxY = Math.abs(Math.min(0, this.bottomBoundary));
-
-		if (typeof xSnap === 'number') {
-			x = xSnap * Math.round(x / xSnap);
-		}
-
-		if (typeof ySnap === 'number') {
-			y = ySnap * Math.round(y / ySnap);
-		}
-
-		if (!animate || !allowOverScroll) {
-			x = Math.max(0, Math.min(x, maxX));
-			y = Math.max(0, Math.min(y, maxY));
-		}
-
-		if (-x == this.x && -y == this.y) return;
-
-		if (!animate) {
-			this.doScrollStart();
-			this.setScrollX(-x);
-			this.setScrollY(-y);
-			this.doScroll();
-			this.doScrollStop();
-		}
-		else {
-			if (y !== null) {
-				this.endY = -y;
-				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
-			}
-			if (x !== null) {
-				this.endX = -x;
-				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
-			}
-			this.start();
-		}
-	},
-
-	/**
-	* Sets the scroll position along the x-axis.
-	*
-	* @param {Number} x - The x-axis scroll position in pixels.
-	* @method
-	* @private
-	*/
-	setScrollX: function (x) {
-		this.x = this.x0 = x;
-	},
-
-	/**
-	* Sets the scroll position along the y-axis.
-	*
-	* @param {Number} y - The y-axis scroll position in pixels.
-	* @method
-	* @private
-	*/
-	setScrollY: function (y) {
-		this.y = this.y0 = y;
-	},
-
-	/**
-	* Sets the scroll position; defaults to setting this position along the y-axis.
-	*
-	* @param {Number} pos - The scroll position in pixels.
-	* @method
-	* @private
-	*/
-	setScrollPosition: function (pos) {
-		this.setScrollY(pos);
-	},
-
-	canScrollX: function() {
-		return this.horizontal && this.rightBoundary < 0;
-	},
-
-	canScrollY: function() {
-		return this.vertical && this.bottomBoundary < 0;
-	},
-
-
-	/**
-	* Determines whether or not the [scroller]{@link module:enyo/Scroller~Scroller} is actively moving.
-	*
-	* @return {Boolean} `true` if actively moving; otherwise, `false`.
-	* @private
-	*/
-	isScrolling: function () {
-		return Boolean(this.job);
-	},
-
-	/**
-	* Determines whether or not the [scroller]{@link module:enyo/Scroller~Scroller} is in overscroll.
-	*
-	* @return {Boolean} `true` if in overscroll; otherwise, `false`.
-	* @private
-	*/
-	isInOverScroll: function () {
-		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
-			this.y > this.topBoundary || this.y < this.bottomBoundary);
-	}
-});
-
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./platform':'enyo/platform','./animation':'enyo/animation','./Component':'enyo/Component'}],'enyo/Collection':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./Component':'enyo/Component'}],'enyo/Collection':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -15612,7 +14439,1180 @@ exports.concat = function (ctor, props) {
 	}
 };
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./Component':'enyo/Component','./EventEmitter':'enyo/EventEmitter','./Model':'enyo/Model','./ModelList':'enyo/ModelList','./StateSupport':'enyo/StateSupport','./Source':'enyo/Source','./Store':'enyo/Store','./States':'enyo/States'}],'enyo/AjaxSource':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./Component':'enyo/Component','./EventEmitter':'enyo/EventEmitter','./Model':'enyo/Model','./ModelList':'enyo/ModelList','./StateSupport':'enyo/StateSupport','./Source':'enyo/Source','./Store':'enyo/Store','./States':'enyo/States'}],'enyo/MultipleDispatchComponent':[function (module,exports,global,require,request){
+require('enyo');
+
+/**
+* Contains the declaration for the {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent} kind.
+* @module enyo/MultipleDispatchComponent
+*/
+
+var
+	kind = require('./kind');
+
+var
+	Component = require('./Component'),
+	MultipleDispatchSupport = require('./MultipleDispatchSupport');
+
+/**
+* {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent} is a purely abstract
+* {@glossary kind} that simply provides a common ancestor for
+* {@link module:enyo/Component~Component} [objects]{@glossary Object} that need 
+* the [MultipleDispatchSupport]{@link module:enyo/MultipleDispatchSupport~MultipleDispatchSupport}
+* {@glossary mixin}.
+*
+* @class MultipleDispatchComponent
+* @extends module:enyo/Component~Component
+* @mixes module:enyo/MultipleDispatchSupport~MultipleDispatchSupport
+* @public
+*/
+module.exports = kind(
+	/** @lends module:enyo/MultipleDispatchComponent~MultipleDispatchComponent */ {
+
+	/**
+	* @private
+	*/
+	kind: Component,
+
+	/**
+	* @private
+	*/
+	mixins: [MultipleDispatchSupport]
+});
+
+},{'./kind':'enyo/kind','./Component':'enyo/Component','./MultipleDispatchSupport':'enyo/MultipleDispatchSupport'}],'enyo/Animator':[function (module,exports,global,require,request){
+require('enyo');
+
+/**
+* Contains the declaration for the {@link module:enyo/Animator~Animator} kind.
+* @module enyo/Animator
+*/
+
+var
+	kind = require('./kind'),
+	utils = require('./utils'),
+	animation = require('./animation');
+
+var
+	Component = require('./Component'),
+	Jobs = require('./jobs');
+
+/**
+* Fires when an animation step occurs.
+*
+* @event module:enyo/Animator~Animator#onStep
+* @type {Object}
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
+*	propagated the {@glossary event}.
+* @property {Object} event - An [object]{@glossary Object} containing event information.
+* @public
+*/
+
+/**
+* Fires when the animation finishes normally.
+*
+* @event module:enyo/Animator~Animator#onEnd
+* @type {Object}
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
+*	propagated the {@glossary event}.
+* @property {Object} event - An [object]{@glossary Object} containing event information.
+* @public
+*/
+
+/**
+* Fires when the animation is prematurely stopped.
+*
+* @event module:enyo/Animator~Animator#onStop
+* @type {Object}
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
+*	propagated the {@glossary event}.
+* @property {Object} event - An [object]{@glossary Object} containing event information.
+* @public
+*/
+
+/**
+* {@link module:enyo/Animator~Animator} is a basic animation [component]{@link module:enyo/Component~Component}.  Call
+* [play()]{@link module:enyo/Animator~Animator#play} to start the animation. The animation will run for
+* the period (in milliseconds) specified by its [duration]{@link module:enyo/Animator~Animator#duration}
+* property. [onStep]{@link module:enyo/Animator~Animator#onStep} [events]{@glossary event} will
+* fire in quick succession and should be handled to do something based on the
+* [value]{@link module:enyo/Animator~Animator#value} property.
+*
+* The `value` property will progress from [startValue]{@link module:enyo/Animator~Animator#startValue}
+* to [endValue]{@link module:enyo/Animator~Animator#endValue} during the animation, based on the
+* [function]{@glossary Function} referenced by the
+* [easingFunction]{@link module:enyo/Animator~Animator#easingFunction} property.
+*
+* Event handlers may be specified as functions. If specified, the handler function will
+* be used to handle the event directly, without sending the event to its
+* [owner]{@link module:enyo/Component~Component#owner} or [bubbling]{@link module:enyo/Component~Component#bubble} it.
+* The [context]{@link module:enyo/Animator~Animator#context} property may be used to call the supplied
+* event functions in a particular `this` context.
+*
+* During animation, an {@link module:enyo/jobs} priority of 5 is registered to defer low priority
+* tasks.
+*
+* @class Animator
+* @extends module:enyo/Component~Component
+* @public
+*/
+module.exports = kind(
+	/** @lends module:enyo/Animator~Animator.prototype */ {
+
+	/**
+	* A context in which to run the specified {@glossary event} handlers. If this is
+	* not specified or is falsy, then the [global object]{@glossary global} is used.
+	*
+	* @name context
+	* @type {Object}
+	* @default undefined
+	* @memberOf module:enyo/Animator~Animator.prototype
+	* @public
+	*/
+
+	name: 'enyo.Animator',
+
+	/**
+	* @private
+	*/
+	kind: Component,
+
+	/**
+	* @private
+	*/
+	published:
+		/** @lends module:enyo/Animator~Animator.prototype */ {
+
+		/**
+		* Animation duration in milliseconds
+		*
+		* @type {Number}
+		* @default 350
+		* @public
+		*/
+		duration: 350,
+
+		/**
+		* Value of [value]{@link module:enyo/Animator~Animator#value} property at the beginning of an animation.
+		*
+		* @type {Number}
+		* @default 0
+		* @public
+		*/
+		startValue: 0,
+
+		/**
+		* Value of [value]{@link module:enyo/Animator~Animator#value} property at the end of an animation.
+		*
+		* @type {Number}
+		* @default 1
+		* @public
+		*/
+		endValue: 1,
+
+		/**
+		* Node that must be visible in order for the animation to continue. This reference is
+		* destroyed when the animation ceases.
+		*
+		* @type {Object}
+		* @default null
+		* @public
+		*/
+		node: null,
+
+		/**
+		* [Function]{@glossary Function} that determines how the animation progresses from
+		* [startValue]{@link module:enyo/Animator~Animator#startValue} to [endValue]{@link module:enyo/Animator~Animator#endValue}.
+		*
+		* @type {Function}
+		* @default module:enyo/easing~easing.cubicOut
+		* @public
+		*/
+		easingFunction: animation.easing.cubicOut
+	},
+
+	/*
+	* @private
+	*/
+	events: {
+		onStep: '',
+		onEnd: '',
+		onStop: ''
+	},
+
+	/**
+	* @method
+	* @private
+	*/
+	constructed: kind.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this._next = this.bindSafely('next');
+		};
+	}),
+
+	/**
+	* @method
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function() {
+			this.stop();
+			sup.apply(this, arguments);
+		};
+	}),
+
+	/**
+	* Plays the animation.
+	*
+	* @param {Object} props - As a convenience, this [hash]{@glossary Object} will be mixed
+	*	directly into this [object]{@glossary Object}.
+	* @public
+	*/
+	play: function (props) {
+		this.stop();
+		this.reversed = false;
+		if (props) {
+			utils.mixin(this, props);
+		}
+		this.t0 = this.t1 = utils.perfNow();
+		this.value = this.startValue;
+
+		// register this jobPriority to block less urgent tasks from executing
+		Jobs.registerPriority(5, this.id);
+
+		this.job = true;
+		this.next();
+		return this;
+	},
+
+	/**
+	* Stops the animation and fires the associated {@glossary event}.
+	*
+	* @fires module:enyo/Animator~Animator#onStop
+	* @returns {this} The callee for chaining.
+	* @public
+	*/
+	stop: function () {
+		if (this.isAnimating()) {
+			this.cancel();
+			this.fire('onStop');
+			return this;
+		}
+	},
+
+	/**
+	* Stops the animation after a final step
+	*
+	* @returns {this} The callee for chaining
+	* @public
+	*/
+	complete: function () {
+		if (this.isAnimating()) {
+			// set the start time such that the delta will always be greater than the duration
+			// causing the animation to complete immediately
+			this.t0 = -this.duration - 1;
+			this.next();
+		}
+
+		return this;
+	},
+
+	/**
+	* Reverses the direction of a running animation.
+	*
+	* @return {this} The callee for chaining.
+	* @public
+	*/
+	reverse: function () {
+		if (this.isAnimating()) {
+			this.reversed = !this.reversed;
+			var now = this.t1 = utils.perfNow();
+			// adjust start time (t0) to allow for animation done so far to replay
+			var elapsed = now - this.t0;
+			this.t0 = now + elapsed - this.duration;
+			// swap start and end values
+			var startValue = this.startValue;
+			this.startValue = this.endValue;
+			this.endValue = startValue;
+			return this;
+		}
+	},
+
+	/**
+	* Determines whether an animation is in progress.
+	*
+	* @returns {Boolean} `true` if there is an animation currently running; otherwise, `false`.
+	* @private
+	*/
+	isAnimating: function () {
+		return Boolean(this.job);
+	},
+
+	/**
+	* @private
+	*/
+	requestNext: function () {
+		this.job = animation.requestAnimationFrame(this._next, this.node);
+	},
+
+	/**
+	* @private
+	*/
+	cancel: function () {
+		animation.cancelAnimationFrame(this.job);
+		this.node = null;
+		this.job = null;
+
+		// unblock job queue
+		Jobs.unregisterPriority(this.id);
+	},
+
+	/**
+	* @private
+	*/
+	shouldEnd: function () {
+		return (this.dt >= this.duration);
+	},
+
+	/**
+	* Runs the next step of the animation.
+	*
+	* @fires module:enyo/Animator~Animator#onStep
+	* @fires module:enyo/Animator~Animator#onEnd
+	* @private
+	*/
+	next: function () {
+		this.t1 = utils.perfNow();
+		this.dt = this.t1 - this.t0;
+		var args = this.easingFunction.length;
+		var f;
+
+		if (args === 1) {
+			// time independent
+			f = this.fraction = animation.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
+			this.value = this.startValue + f * (this.endValue - this.startValue);
+		} else {
+			this.value = animation.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed,
+				this.dt, this.startValue, (this.endValue - this.startValue));
+		}
+		if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
+			this.value = this.endValue;
+			this.fraction = 1;
+			this.fire('onStep');
+			this.cancel();
+			utils.asyncMethod(this.bindSafely(function() {
+				this.fire('onEnd');
+			}));
+		} else {
+			this.fire('onStep');
+			this.requestNext();
+		}
+	},
+
+	/**
+	* @private
+	*/
+	fire: function (nom) {
+		var fn = this[nom];
+		if (utils.isString(fn)) {
+			this.bubble(nom);
+		} else if (fn) {
+			fn.call(this.context || global, this);
+		}
+	}
+});
+
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./animation':'enyo/animation','./Component':'enyo/Component','./jobs':'enyo/jobs'}],'enyo/ScrollMath':[function (module,exports,global,require,request){
+require('enyo');
+
+/**
+* Contains the declaration for the {@link module:enyo/ScrollMath~ScrollMath} kind.
+* @module enyo/ScrollMath
+*/
+
+var
+	kind = require('./kind'),
+	utils = require('./utils'),
+	platform = require('./platform'),
+	animation = require('./animation');
+
+var
+	Component = require('./Component');
+
+/**
+* Fires when a scrolling action starts.
+*
+* @event module:enyo/ScrollMath~ScrollMath#onScrollStart
+* @type {Object}
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
+*	propagated the {@glossary event}.
+* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
+*	event information.
+* @private
+*/
+
+/**
+* Fires while a scrolling action is in progress.
+*
+* @event module:enyo/ScrollMath~ScrollMath#onScroll
+* @type {Object}
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
+*	propagated the {@glossary event}.
+* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
+*	event information.
+* @private
+*/
+
+/**
+* Fires when a scrolling action stops.
+*
+* @event module:enyo/ScrollMath~ScrollMath#onScrollStop
+* @type {Object}
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
+*	propagated the {@glossary event}.
+* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
+*	event information.
+* @private
+*/
+
+/**
+* {@link module:enyo/ScrollMath~ScrollMath} implements a scrolling dynamics simulation. It is a
+* helper [kind]{@glossary kind} used by other [scroller]{@link module:enyo/Scroller~Scroller}
+* kinds, such as {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy}.
+*
+* `enyo/ScrollMath` is not typically created in application code.
+*
+* @class ScrollMath
+* @protected
+*/
+module.exports = kind(
+	/** @lends module:enyo/ScrollMath~ScrollMath.prototype */ {
+
+	name: 'enyo.ScrollMath',
+
+	/**
+	* @private
+	*/
+	kind: Component,
+
+	/**
+	* @private
+	*/
+	published:
+		/** @lends module:enyo/ScrollMath~ScrollMath.prototype */ {
+
+		/**
+		* Set to `true` to enable vertical scrolling.
+		*
+		* @type {Boolean}
+		* @default true
+		* @private
+		*/
+		vertical: true,
+
+		/**
+		* Set to `true` to enable horizontal scrolling.
+		*
+		* @type {Boolean}
+		* @default true
+		* @private
+		*/
+		horizontal: true
+	},
+
+	/**
+	* @private
+	*/
+	events: {
+		onScrollStart: '',
+		onScroll: '',
+		onScrollStop: '',
+		onStabilize: ''
+	},
+
+	/**
+	* "Spring" damping returns the scroll position to a value inside the boundaries. Lower
+	* values provide faster snapback.
+	*
+	* @private
+	*/
+	kSpringDamping: 0.93,
+
+	/**
+	* "Drag" damping resists dragging the scroll position beyond the boundaries. Lower values
+	* provide more resistance.
+	*
+	* @private
+	*/
+	kDragDamping: 0.5,
+
+	/**
+	* "Friction" damping reduces momentum over time. Lower values provide more friction.
+	*
+	* @private
+	*/
+	kFrictionDamping: 0.97,
+
+	/**
+	* Additional "friction" damping applied when momentum carries the viewport into overscroll.
+	* Lower values provide more friction.
+	*
+	* @private
+	*/
+	kSnapFriction: 0.9,
+
+	/**
+	* Scalar applied to `flick` event velocity.
+	*
+	* @private
+	*/
+	kFlickScalar: 15,
+
+	/**
+	* Limits the maximum allowable flick. On Android > 2, we limit this to prevent compositing
+	* artifacts.
+	*
+	* @private
+	*/
+	kMaxFlick: platform.android > 2 ? 2 : 1e9,
+
+	/**
+	* The value used in [friction()]{@link module:enyo/ScrollMath~ScrollMath#friction} to determine if the delta
+	* (e.g., y - y0) is close enough to zero to consider as zero.
+	*
+	* @private
+	*/
+	kFrictionEpsilon: platform.webos >= 4 ? 1e-1 : 1e-2,
+
+	/**
+	* Top snap boundary, generally `0`.
+	*
+	* @private
+	*/
+	topBoundary: 0,
+
+	/**
+	* Right snap boundary, generally `(viewport width - content width)`.
+	*
+	* @private
+	*/
+	rightBoundary: 0,
+
+	/**
+	* Bottom snap boundary, generally `(viewport height - content height)`.
+	*
+	* @private
+	*/
+	bottomBoundary: 0,
+
+	/**
+	* Left snap boundary, generally `0`.
+	*
+	* @private
+	*/
+	leftBoundary: 0,
+
+	/**
+	* Animation time step.
+	*
+	* @private
+	*/
+	interval: 20,
+
+	/**
+	* Flag to enable frame-based animation; if `false`, time-based animation is used.
+	*
+	* @private
+	*/
+	fixedTime: true,
+
+	/**
+	* Simulation state.
+	*
+	* @private
+	*/
+	x0: 0,
+
+	/**
+	* Simulation state.
+	*
+	* @private
+	*/
+	x: 0,
+
+	/**
+	* Simulation state.
+	*
+	* @private
+	*/
+	y0: 0,
+
+	/**
+	* Simulation state.
+	*
+	* @private
+	*/
+	y: 0,
+
+	/**
+	* @method
+	* @private
+	*/
+	create: kind.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.boundarySnapshot = {};
+		};
+	}),
+
+	/**
+	* @method
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function() {
+			this.stop();
+			sup.apply(this, arguments);
+		};
+	}),
+
+	/**
+	* Simple Verlet integrator for simulating Newtonian motion.
+	*
+	* @private
+	*/
+	verlet: function () {
+		var x = this.x;
+		this.x += x - this.x0;
+		this.x0 = x;
+		//
+		var y = this.y;
+		this.y += y - this.y0;
+		this.y0 = y;
+	},
+
+	/**
+	* Boundary damping function. Returns damped `value` based on `coeff` on one side of
+	* `origin`.
+	*
+	* @private
+	*/
+	damping: function (val, origin, coeff, sign) {
+		var kEpsilon = 0.5;
+		//
+		// this is basically just value *= coeff (generally, coeff < 1)
+		//
+		// 'sign' and the conditional is to force the damping to only occur
+		// on one side of the origin.
+		//
+		var dv = val - origin;
+		// Force close-to-zero to zero
+		if (Math.abs(dv) < kEpsilon) {
+			return origin;
+		}
+		return val*sign > origin*sign ? coeff * dv + origin : val;
+	},
+
+	/**
+	* Dual-boundary damping function. Returns damped `value` based on `coeff` when exceeding
+	* either boundary.
+	*
+	* @private
+	*/
+	boundaryDamping: function (val, aBoundary, bBoundary, coeff) {
+		return this.damping(this.damping(val, aBoundary, coeff, 1), bBoundary, coeff, -1);
+	},
+
+	/**
+	* Simulation constraints (spring damping occurs here).
+	*
+	* @private
+	*/
+	constrain: function () {
+		var b = this.getDampingBoundaries(),
+			y = this.boundaryDamping(this.y, b.top, b.bottom, this.kSpringDamping),
+			x = this.boundaryDamping(this.x, b.left, b.right, this.kSpringDamping);
+
+		if (y != this.y) {
+			// ensure snapping introduces no velocity, add additional friction
+			this.y0 = y - (this.y - this.y0) * this.kSnapFriction;
+			this.y = y;
+		}
+
+		if (x != this.x) {
+			this.x0 = x - (this.x - this.x0) * this.kSnapFriction;
+			this.x = x;
+		}
+	},
+
+	/**
+	* The friction function.
+	*
+	* @private
+	*/
+	friction: function (ex, ex0, coeff) {
+		// implicit velocity
+		var dp = this[ex] - this[ex0];
+		// let close-to-zero collapse to zero (i.e. smaller than epsilon is considered zero)
+		var c = Math.abs(dp) > this.kFrictionEpsilon ? coeff : 0;
+		// reposition using damped velocity
+		this[ex] = this[ex0] + c * dp;
+	},
+
+	/**
+	* One unit of time for simulation.
+	*
+	* @private
+	*/
+	frame: 10,
+	// piece-wise constraint simulation
+	simulate: function (t) {
+		while (t >= this.frame) {
+			t -= this.frame;
+			if (!this.dragging) {
+				this.constrain();
+			}
+			this.verlet();
+			this.friction('y', 'y0', this.kFrictionDamping);
+			this.friction('x', 'x0', this.kFrictionDamping);
+		}
+		return t;
+	},
+
+	/**
+	* @method
+	* @private
+	*/
+	getDampingBoundaries: function() {
+		return this.haveBoundarySnapshot ?
+			this.boundarySnapshot :
+			{
+				top : this.topBoundary,
+				bottom : this.bottomBoundary,
+				left : this.leftBoundary,
+				right : this.rightBoundary
+			};
+	},
+
+	/**
+	* @method
+	* @private
+	*/
+	takeBoundarySnapshot: function () {
+		var s;
+
+		if (!this.haveBoundarySnapshot) {
+			s = this.boundarySnapshot;
+
+			s.top = this.topBoundary;
+			s.bottom = this.bottomBoundary;
+			s.left = this.leftBoundary;
+			s.right = this.rightBoundary;
+
+			this.haveBoundarySnapshot = true;
+		}
+	},
+
+	/**
+	* @method
+	* @private
+	*/
+	discardBoundarySnapshot: function() {
+		this.haveBoundarySnapshot = false;
+	},
+
+	/**
+	* @fires module:enyo/ScrollMath~ScrollMath#onScrollStop
+	* @private
+	*/
+	animate: function () {
+		this.stop();
+		// time tracking
+		var t0 = utils.perfNow(), t = 0;
+		// delta tracking
+		var x0, y0;
+		// animation handler
+		var fn = this.bindSafely(function() {
+			// wall-clock time
+			var t1 = utils.perfNow();
+			// schedule next frame
+			this.job = animation.requestAnimationFrame(fn);
+			// delta from last wall clock time
+			var dt = t1 - t0;
+			// record the time for next delta
+			t0 = t1;
+			// user drags override animation
+			if (this.dragging) {
+				this.y0 = this.y = this.uy;
+				this.x0 = this.x = this.ux;
+				this.endX = this.endY = null;
+			}
+			// frame-time accumulator
+			// min acceptable time is 16ms (60fps)
+			t += Math.max(16, dt);
+			// prevent snapping to originally desired scroll position if we are in overscroll
+			if (this.isInOverScroll()) {
+				this.endX = null;
+				this.endY = null;
+
+				this.takeBoundarySnapshot();
+			}
+			else {
+				this.discardBoundarySnapshot();
+
+				// alternate fixed-time step strategy:
+				if (this.fixedTime) {
+					t = this.interval;
+				}
+			}
+			// consume some t in simulation
+			t = this.simulate(t);
+			// scroll if we have moved, otherwise the animation is stalled and we can stop
+			if (y0 != this.y || x0 != this.x) {
+				this.scroll();
+			} else if (!this.dragging) {
+				// set final values
+				if (this.endX != null) {
+					this.x = this.x0 = this.endX;
+				}
+				if (this.endY != null) {
+					this.y = this.y0 = this.endY;
+				}
+
+				this.stop();
+				this.scroll();
+				this.doScrollStop();
+
+				this.endX = null;
+				this.endY = null;
+			}
+			y0 = this.y;
+			x0 = this.x;
+		});
+		this.job = animation.requestAnimationFrame(fn);
+	},
+
+	/**
+	* @private
+	*/
+	start: function () {
+		if (!this.job) {
+			this.doScrollStart();
+			this.animate();
+		}
+	},
+
+	/**
+	* @private
+	*/
+	stop: function (fire) {
+		var job = this.job;
+		if (job) {
+			this.job = animation.cancelAnimationFrame(job);
+		}
+		if (fire) {
+			this.doScrollStop();
+
+			this.endX = undefined;
+			this.endY = undefined;
+		}
+	},
+
+	/**
+	* Adjusts the scroll position to be valid, if necessary (e.g., after the scroll contents
+	* have changed).
+	*
+	* @private
+	*/
+	stabilize: function (opts) {
+		var fire = !opts || opts.fire === undefined || opts.fire;
+		var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
+		var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
+		if (y != this.y || x != this.x) {
+			this.y = this.y0 = y;
+			this.x = this.x0 = x;
+			if (fire) {
+				this.doStabilize();
+			}
+		}
+	},
+
+	/**
+	* @private
+	*/
+	startDrag: function (e) {
+		this.dragging = true;
+		//
+		this.my = e.pageY;
+		this.py = this.uy = this.y;
+		//
+		this.mx = e.pageX;
+		this.px = this.ux = this.x;
+	},
+
+	/**
+	* @private
+	*/
+	drag: function (e) {
+		var dy, dx, v, h;
+		if (this.dragging) {
+			v = this.canScrollY();
+			h = this.canScrollX();
+
+			dy = v ? e.pageY - this.my : 0;
+			this.uy = dy + this.py;
+			// provides resistance against dragging into overscroll
+			this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
+			//
+			dx = h ? e.pageX - this.mx : 0;
+			this.ux = dx + this.px;
+			// provides resistance against dragging into overscroll
+			this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);
+			//
+			this.start();
+			return true;
+		}
+	},
+
+	/**
+	* @private
+	*/
+	dragDrop: function () {
+		if (this.dragging && !window.PalmSystem) {
+			var kSimulatedFlickScalar = 0.5;
+			this.y = this.uy;
+			this.y0 = this.y - (this.y - this.y0) * kSimulatedFlickScalar;
+			this.x = this.ux;
+			this.x0 = this.x - (this.x - this.x0) * kSimulatedFlickScalar;
+		}
+		this.dragFinish();
+	},
+
+	/**
+	* @private
+	*/
+	dragFinish: function () {
+		this.dragging = false;
+	},
+
+	/**
+	* @private
+	*/
+	flick: function (e) {
+		var v;
+		if (this.canScrollY()) {
+			v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
+			this.y = this.y0 + v * this.kFlickScalar;
+		}
+		if (this.canScrollX()) {
+			v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
+			this.x = this.x0 + v * this.kFlickScalar;
+		}
+		this.start();
+	},
+
+	/**
+	* TODO: Refine and test newMousewheel, remove this
+	* @private
+	*/
+	mousewheel: function (e) {
+		var dy = this.vertical ? e.wheelDeltaY || (!e.wheelDeltaX ? e.wheelDelta : 0) : 0,
+			dx = this.horizontal ? e.wheelDeltaX : 0,
+			shouldScroll = false;
+		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
+			this.y = this.y0 = this.y0 + dy;
+			shouldScroll = true;
+		}
+		if ((dx > 0 && this.x < this.leftBoundary) || (dx < 0 && this.x > this.rightBoundary)) {
+			this.x = this.x0 = this.x0 + dx;
+			shouldScroll = true;
+		}
+		this.stop(!shouldScroll);
+		if (shouldScroll) {
+			this.start();
+			return true;
+		}
+	},
+
+	/**
+	* @private
+	*/
+	newMousewheel: function (e, opts) {
+		var rtl = opts && opts.rtl,
+			wdY = (e.wheelDeltaY === undefined) ? e.wheelDelta : e.wheelDeltaY,
+			dY = wdY,
+			dX = rtl ? -e.wheelDeltaX : e.wheelDeltaX,
+			canY = this.canScrollY(),
+			canX = this.canScrollX(),
+			shouldScroll = false,
+			m = 2,
+			// TODO: Figure out whether we need to port the configurable
+			// max / multiplier feature from Moonstone's implementation,
+			// and (if so) how
+			// max = 100,
+			scr = this.isScrolling(),
+			ovr = this.isInOverScroll(),
+			refY = (scr && this.endY !== null) ? this.endY : this.y,
+			refX = (scr && this.endX !== null) ? this.endX : this.x,
+			tY = refY,
+			tX = refX;
+
+		if (ovr) {
+			return true;
+		}
+
+		// If we're getting strictly vertical mousewheel events over a scroller that
+		// can only move horizontally, the user is probably using a one-dimensional
+		// mousewheel and would like us to scroll horizontally instead
+		if (dY && !dX && canX && !canY) {
+			dX = dY;
+			dY = 0;
+		}
+
+		if (dY && canY) {
+			tY = -(refY + (dY * m));
+			shouldScroll = true;
+		}
+		if (dX && canX) {
+			tX = -(refX + (dX * m));
+			shouldScroll = true;
+		}
+
+		if (shouldScroll) {
+			this.scrollTo(tX, tY, {allowOverScroll: true});
+			return true;
+		}
+	},
+
+	/**
+	* @fires module:enyo/ScrollMath~ScrollMath#onScroll
+	* @private
+	*/
+	scroll: function () {
+		this.doScroll();
+	},
+
+	// NOTE: Yip/Orvell method for determining scroller instantaneous velocity
+	// FIXME: incorrect if called when scroller is in overscroll region
+	// because does not account for additional overscroll damping.
+
+	/**
+	* Scrolls to the specified position.
+	*
+	* @param {Number} x - The `x` position in pixels.
+	* @param {Number} y - The `y` position in pixels.
+	* @param {Object} opts - TODO: Document. When behavior == 'instant', we skip animation.
+	* @private
+	*/
+	scrollTo: function (x, y, opts) {
+		var animate = !opts || opts.behavior !== 'instant',
+			xSnap = this.xSnapIncrement,
+			ySnap = this.ySnapIncrement,
+			allowOverScroll = opts && opts.allowOverScroll,
+			maxX = Math.abs(Math.min(0, this.rightBoundary)),
+			maxY = Math.abs(Math.min(0, this.bottomBoundary));
+
+		if (typeof xSnap === 'number') {
+			x = xSnap * Math.round(x / xSnap);
+		}
+
+		if (typeof ySnap === 'number') {
+			y = ySnap * Math.round(y / ySnap);
+		}
+
+		if (!animate || !allowOverScroll) {
+			x = Math.max(0, Math.min(x, maxX));
+			y = Math.max(0, Math.min(y, maxY));
+		}
+
+		if (-x == this.x && -y == this.y) return;
+
+		if (!animate) {
+			this.doScrollStart();
+			this.setScrollX(-x);
+			this.setScrollY(-y);
+			this.doScroll();
+			this.doScrollStop();
+		}
+		else {
+			if (y !== null) {
+				this.endY = -y;
+				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
+			}
+			if (x !== null) {
+				this.endX = -x;
+				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
+			}
+			this.start();
+		}
+	},
+
+	/**
+	* Sets the scroll position along the x-axis.
+	*
+	* @param {Number} x - The x-axis scroll position in pixels.
+	* @method
+	* @private
+	*/
+	setScrollX: function (x) {
+		this.x = this.x0 = x;
+	},
+
+	/**
+	* Sets the scroll position along the y-axis.
+	*
+	* @param {Number} y - The y-axis scroll position in pixels.
+	* @method
+	* @private
+	*/
+	setScrollY: function (y) {
+		this.y = this.y0 = y;
+	},
+
+	/**
+	* Sets the scroll position; defaults to setting this position along the y-axis.
+	*
+	* @param {Number} pos - The scroll position in pixels.
+	* @method
+	* @private
+	*/
+	setScrollPosition: function (pos) {
+		this.setScrollY(pos);
+	},
+
+	canScrollX: function() {
+		return this.horizontal && this.rightBoundary < 0;
+	},
+
+	canScrollY: function() {
+		return this.vertical && this.bottomBoundary < 0;
+	},
+
+
+	/**
+	* Determines whether or not the [scroller]{@link module:enyo/Scroller~Scroller} is actively moving.
+	*
+	* @return {Boolean} `true` if actively moving; otherwise, `false`.
+	* @private
+	*/
+	isScrolling: function () {
+		return Boolean(this.job);
+	},
+
+	/**
+	* Determines whether or not the [scroller]{@link module:enyo/Scroller~Scroller} is in overscroll.
+	*
+	* @return {Boolean} `true` if in overscroll; otherwise, `false`.
+	* @private
+	*/
+	isInOverScroll: function () {
+		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
+			this.y > this.topBoundary || this.y < this.bottomBoundary);
+	}
+});
+
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./platform':'enyo/platform','./animation':'enyo/animation','./Component':'enyo/Component'}],'enyo/AjaxSource':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -15826,7 +15826,511 @@ module.exports = kind(
 	_isController: true
 });
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./MultipleDispatchComponent':'enyo/MultipleDispatchComponent'}],'enyo/UiComponent':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./MultipleDispatchComponent':'enyo/MultipleDispatchComponent'}],'enyo/dispatcher':[function (module,exports,global,require,request){
+/**
+* Contains dispatcher methods
+* @module enyo/dispatcher
+* @private
+*/
+require('enyo');
+
+var
+	logger = require('./logger'),
+	master = require('./master'),
+	utils = require('./utils');
+
+var
+	Dom = require('./dom');
+
+/**
+ * An [object]{@glossary Object} describing the the last known coordinates of the cursor or
+ * user-interaction point in touch environments.
+ *
+ * @typedef {Object} module:enyo/dispatcher~CursorCoordinates
+ * @property {Number} clientX - The horizontal coordinate within the application's client area.
+ * @property {Number} clientY - The vertical coordinate within the application's client area.
+ * @property {Number} pageX - The X coordinate of the cursor relative to the viewport, including any
+ *   scroll offset.
+ * @property {Number} pageY - The Y coordinate of the cursor relative to the viewport, including any
+ *   scroll offset.
+ * @property {Number} screenX - The X coordinate of the cursor relative to the screen, not including
+ *   any scroll offset.
+ * @property {Number} screenY - The Y coordinate of the cursor relative to the screen, not including
+ *   any scroll offset.
+ */
+
+/**
+* @private
+*/
+var dispatcher = module.exports = dispatcher = {
+
+	$: {},
+
+	/**
+	* These events come from document
+	*
+	* @private
+	*/
+	events: ['mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mousewheel',
+		'click', 'dblclick', 'change', 'keydown', 'keyup', 'keypress', 'input',
+		'paste', 'copy', 'cut', 'webkitTransitionEnd', 'transitionend', 'webkitAnimationEnd', 'animationend',
+		'webkitAnimationStart', 'animationstart', 'webkitAnimationIteration', 'animationiteration'],
+
+	/**
+	* These events come from window
+	*
+	* @private
+	*/
+	windowEvents: ['resize', 'load', 'unload', 'message', 'hashchange', 'popstate', 'focus', 'blur'],
+
+	/**
+	* Feature plugins (aka filters)
+	*
+	* @private
+	*/
+	features: [],
+
+	/**
+	* @private
+	*/
+	connect: function() {
+		var d = dispatcher, i, n;
+		for (i=0; (n=d.events[i]); i++) {
+			d.listen(document, n);
+		}
+		for (i=0; (n=d.windowEvents[i]); i++) {
+			// Chrome Packaged Apps don't like "unload"
+			if(n === 'unload' &&
+				(typeof global.chrome === 'object') &&
+				global.chrome.app) {
+				continue;
+			}
+
+			d.listen(window, n);
+		}
+	},
+
+	/**
+	* @private
+	*/
+	listen: function(inListener, inEventName, inHandler) {
+		inListener.addEventListener(inEventName, inHandler || dispatch, false);
+	},
+
+	/**
+	* @private
+	*/
+	stopListening: function(inListener, inEventName, inHandler) {
+		inListener.removeEventListener(inEventName, inHandler || dispatch, false);
+	},
+
+	/**
+	* Fires an event for Enyo to listen for.
+	*
+	* @private
+	*/
+	dispatch: function(e) {
+		// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
+		var c = this.findDispatchTarget(e.target) || this.findDefaultTarget();
+		// Cache the original target
+		e.dispatchTarget = c;
+		// support pluggable features return true to abort immediately or set e.preventDispatch to avoid processing.
+		for (var i=0, fn; (fn=this.features[i]); i++) {
+			if (fn.call(this, e) === true) {
+				return;
+			}
+		}
+		if (c && !e.preventDispatch) {
+			return this.dispatchBubble(e, c);
+		}
+	},
+
+	/**
+	* Takes an event target and finds the corresponding Enyo control.
+	*
+	* @private
+	*/
+	findDispatchTarget: function(inNode) {
+		var t, n = inNode;
+		// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context"
+		// which appears to happen for scrollbar nodes in particular. It's unclear why those nodes are valid targets if
+		// it is illegal to interrogate them. Would like to trap the bad nodes explicitly rather than using an exception block.
+		try {
+			while (n) {
+				if ((t = this.$[n.id])) {
+					// there could be multiple nodes with this id, the relevant node for this event is n
+					// we don't push this directly to t.node because sometimes we are just asking what
+					// the target 'would be' (aka, calling findDispatchTarget from handleMouseOverOut)
+					t.eventNode = n;
+					break;
+				}
+				n = n.parentNode;
+			}
+		} catch(x) {
+			logger.log(x, n);
+		}
+		return t;
+	},
+
+	/**
+	* Returns the default Enyo control for events.
+	*
+	* @private
+	*/
+	findDefaultTarget: function() {
+		return master;
+	},
+
+	/**
+	* @private
+	*/
+	dispatchBubble: function(e, c) {
+		var type = e.type;
+		type = e.customEvent ? type : 'on' + type;
+		return c.bubble(type, e, c);
+	}
+};
+
+/**
+* Called in the context of an event.
+*
+* @name module:enyo/dispatcher.iePreventDefault
+* @static
+* @method
+* @private
+*/
+dispatcher.iePreventDefault = function() {
+	try {
+		this.returnValue = false;
+	}
+	catch(e) {
+		// do nothing
+	}
+};
+
+/**
+* @private
+*/
+function dispatch (inEvent) {
+	return dispatcher.dispatch(inEvent);
+}
+
+/**
+* @name module:enyo/dispatcher.bubble
+* @static
+* @method
+* @private
+*/
+dispatcher.bubble = function(inEvent) {
+	if (inEvent) {
+		dispatcher.dispatch(inEvent);
+	}
+};
+
+// This string is set on event handlers attributes for DOM elements that
+// don't normally bubble (like onscroll) so that they can participate in the
+// Enyo event system.
+dispatcher.bubbler = 'enyo.bubble(arguments[0])';
+
+// The code below helps make Enyo compatible with Google Packaged Apps
+// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
+// which, among other things, forbids the use of inline scripts.
+// We replace online scripting with equivalent means, leaving dispatcher.bubbler
+// for backward compatibility.
+(function() {
+	var bubbleUp = function() {
+		dispatcher.bubble(arguments[0]);
+	};
+
+	/**
+	* Makes given events bubble on a specified Enyo control.
+	*
+	* @name: module:enyo/dispatcher.makeBubble
+	* @method
+	* @private
+	*/
+	dispatcher.makeBubble = function() {
+		var args = Array.prototype.slice.call(arguments, 0),
+			control = args.shift();
+
+		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
+			utils.forEach(args, function(event) {
+				if(this.hasNode()) {
+					dispatcher.listen(this.node, event, bubbleUp);
+				}
+			}, control);
+		}
+	};
+
+	/**
+	* Removes the event listening and bubbling initiated by
+	* [makeBubble()]{@link module:enyo/dispatcher.makeBubble} on a specific control.
+	*
+	* @name: module:enyo/dispatcher.unmakeBubble
+	* @method
+	* @private
+	*/
+	dispatcher.unmakeBubble = function() {
+		var args = Array.prototype.slice.call(arguments, 0),
+			control = args.shift();
+
+		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
+			utils.forEach(args, function(event) {
+				if(this.hasNode()) {
+					dispatcher.stopListening(this.node, event, bubbleUp);
+				}
+			}, control);
+		}
+	};
+})();
+
+/**
+* @private
+*/
+// FIXME: we need to create and initialize dispatcher someplace else to allow overrides
+Dom.requiresWindow(dispatcher.connect);
+
+/**
+* Generates a tapped event for a raw-click event.
+*
+* @private
+*/
+dispatcher.features.push(
+	function (e) {
+		if ('click' === e.type) {
+			if (e.clientX === 0 && e.clientY === 0 && !e.detail) {
+				// this allows the click to dispatch as well
+				// but note the tap event will fire first
+				var cp = utils.clone(e);
+				cp.type = 'tap';
+				cp.preventDefault = utils.nop;
+				dispatcher.dispatch(cp);
+			}
+		}
+	}
+);
+
+/**
+* Instead of having multiple `features` pushed and handled in separate methods
+* for these events, we handle them uniformly here to expose the last known
+* interaction coordinates as accurately as possible.
+*
+* @private
+*/
+var _xy = {};
+dispatcher.features.push(
+	function (e) {
+		if (
+			(e.type == 'mousemove')  ||
+			(e.type == 'tap')        ||
+			(e.type == 'click')      ||
+			(e.type == 'touchmove')
+		) {
+			var evt = (e.type == 'touchmove') ? e.touches[0] : e;
+			_xy.clientX = evt.clientX;
+			_xy.clientY = evt.clientY;
+			// note only ie8 does not support pageX/pageY
+			_xy.pageX   = evt.pageX;
+			_xy.pageY   = evt.pageY;
+			// note ie8 and opera report these values incorrectly
+			_xy.screenX = evt.screenX;
+			_xy.screenY = evt.screenY;
+		}
+	}
+);
+
+/**
+* Retrieves the last known coordinates of the cursor or user-interaction point
+* in touch environments. Returns an immutable object with the `clientX`,
+* `clientY`, `pageX`, `pageY`, `screenX`, and `screenY` properties. It is
+* important to note that IE8 and Opera have improper reporting for the
+* `screenX` and `screenY` properties (they both use CSS pixels as opposed to
+* device pixels).
+*
+* @returns {module:enyo/dispatcher~CursorCoordinates} An [object]{@glossary Object} describing the
+*	the last known coordinates of the cursor or user-interaction point in touch environments.
+* @public
+*/
+dispatcher.getPosition = function () {
+	return utils.clone(_xy);
+};
+
+
+/**
+* Key mapping feature: Adds a `keySymbol` property to key [events]{@glossary event},
+* based on a global key mapping. Use
+* [registerKeyMap()]{@link module:enyo/dispatcher.registerKeyMap} to add
+* keyCode-to-keySymbol mappings via a simple hash. This method may be called
+* multiple times from different libraries to mix different maps into the global
+* mapping table; if conflicts arise, the last-in wins.
+*
+* ```
+* dispatcher.registerKeyMap({
+* 	415 : 'play',
+* 	413 : 'stop',
+* 	19  : 'pause',
+* 	412 : 'rewind',
+* 	417 : 'fastforward'
+* });
+* ```
+*
+* @private
+*/
+dispatcher.features.push(function(e) {
+	if ((e.type === 'keydown') || (e.type === 'keyup') || (e.type === 'keypress')) {
+		e.keySymbol = this.keyMap[e.keyCode];
+		// Dispatch key events to be sent via Signals
+		var c = this.findDefaultTarget();
+		if (e.dispatchTarget !== c) {
+			this.dispatchBubble(e, c);
+		}
+	}
+});
+
+utils.mixin(dispatcher, {
+	keyMap: {},
+	registerKeyMap: function(map) {
+		utils.mixin(this.keyMap, map);
+	}
+});
+
+
+/**
+* Event modal capture feature. Capture events to a specific control via
+* [capture(inControl, inShouldForward)]{@linkcode module:enyo/dispatcher.capture};
+* release events via [release()]{@link module:enyo/dispatcher.release}.
+*
+* @private
+*/
+dispatcher.features.push(function(e) {
+	if (this.captureTarget) {
+		var c = e.dispatchTarget;
+		var eventName = (e.customEvent ? '' : 'on') + e.type;
+		var handlerName = this.captureEvents[eventName];
+		var handlerScope = this.captureHandlerScope || this.captureTarget;
+		var handler = handlerName && handlerScope[handlerName];
+		var shouldCapture = handler && !(c && c.isDescendantOf && c.isDescendantOf(this.captureTarget));
+		if (shouldCapture) {
+			var c1 = e.captureTarget = this.captureTarget;
+			// NOTE: We do not want releasing capture while an event is being processed to alter
+			// the way the event propagates. Therefore decide if the event should forward
+			// before the capture target receives the event (since it may release capture).
+			e.preventDispatch = handler && handler.apply(handlerScope, [c1, e]) && !this.autoForwardEvents[e.type];
+		}
+	}
+});
+
+//
+//        NOTE: This object is a plug-in; these methods should
+//        be called on `enyo/dispatcher`, and not on the plug-in itself.
+//
+utils.mixin(dispatcher, {
+
+	/**
+	* @private
+	*/
+	autoForwardEvents: {leave: 1, resize: 1},
+
+	/**
+	* @private
+	*/
+	captures: [],
+
+	/**
+	* Captures [events]{@glossary event} for `inTarget`, where `inEvents` is specified as a
+	* hash of event names mapped to callback handler names to be called on `inTarget` (or,
+	* optionally, `inScope`). The callback is called when any of the captured events are
+	* dispatched outside of the capturing control. Returning `true` from the callback stops
+	* dispatch of the event to the original `dispatchTarget`.
+	*
+	* @private
+	*/
+	capture: function(inTarget, inEvents, inScope) {
+		var info = {target: inTarget, events: inEvents, scope: inScope};
+		this.captures.push(info);
+		this.setCaptureInfo(info);
+	},
+
+	/**
+	* Removes the specified target from the capture list.
+	*
+	* @private
+	*/
+	release: function(inTarget) {
+		for (var i = this.captures.length - 1; i >= 0; i--) {
+			if (this.captures[i].target === inTarget) {
+				this.captures.splice(i,1);
+				this.setCaptureInfo(this.captures[this.captures.length-1]);
+				break;
+			}
+		}
+	},
+
+	/**
+	* Sets the information for a captured {@glossary event}.
+	*
+	* @private
+	*/
+	setCaptureInfo: function(inInfo) {
+		this.captureTarget = inInfo && inInfo.target;
+		this.captureEvents = inInfo && inInfo.events;
+		this.captureHandlerScope = inInfo && inInfo.scope;
+	}
+});
+
+
+(function () {
+	/**
+	* Dispatcher preview feature
+	*
+	* Allows {@link module:enyo/Control~Control} ancestors of the {@glossary event} target
+	* a chance (eldest first) to react by implementing `previewDomEvent`.
+	*
+	* @todo Revisit how/if we document this
+	* @private
+	*/
+	var fn = 'previewDomEvent';
+	var preview = {
+
+		feature: function(e) {
+			preview.dispatch(e, e.dispatchTarget);
+		},
+
+		/*
+		* @returns {(Boolean|undefined)} Handlers return `true` to abort preview and prevent default
+		*	event processing.
+		*/
+		dispatch: function(evt, control) {
+			var i, l,
+			lineage = this.buildLineage(control);
+			for (i=0; (l=lineage[i]); i++) {
+				if (l[fn] && l[fn](evt) === true) {
+					evt.preventDispatch = true;
+					return;
+				}
+			}
+		},
+
+		/*
+		* We ascend, making a list of Enyo [controls]{@link module:enyo/Control~Control}.
+		*
+		* Note that a control is considered to be its own ancestor.
+		*/
+		buildLineage: function(control) {
+			var lineage = [],
+				c = control;
+			while (c) {
+				lineage.unshift(c);
+				c = c.parent;
+			}
+			return lineage;
+		}
+	};
+
+	dispatcher.features.push(preview.feature);
+})();
+
+},{'./logger':'enyo/logger','./master':'enyo/master','./utils':'enyo/utils','./dom':'enyo/dom'}],'enyo/UiComponent':[function (module,exports,global,require,request){
 require('enyo');
 
 /**
@@ -16550,511 +17054,7 @@ var UiComponent = module.exports = kind(
 	}
 });
 
-},{'./kind':'enyo/kind','./utils':'enyo/utils','./master':'enyo/master','./Component':'enyo/Component'}],'enyo/dispatcher':[function (module,exports,global,require,request){
-/**
-* Contains dispatcher methods
-* @module enyo/dispatcher
-* @private
-*/
-require('enyo');
-
-var
-	logger = require('./logger'),
-	master = require('./master'),
-	utils = require('./utils');
-
-var
-	Dom = require('./dom');
-
-/**
- * An [object]{@glossary Object} describing the the last known coordinates of the cursor or
- * user-interaction point in touch environments.
- *
- * @typedef {Object} module:enyo/dispatcher~CursorCoordinates
- * @property {Number} clientX - The horizontal coordinate within the application's client area.
- * @property {Number} clientY - The vertical coordinate within the application's client area.
- * @property {Number} pageX - The X coordinate of the cursor relative to the viewport, including any
- *   scroll offset.
- * @property {Number} pageY - The Y coordinate of the cursor relative to the viewport, including any
- *   scroll offset.
- * @property {Number} screenX - The X coordinate of the cursor relative to the screen, not including
- *   any scroll offset.
- * @property {Number} screenY - The Y coordinate of the cursor relative to the screen, not including
- *   any scroll offset.
- */
-
-/**
-* @private
-*/
-var dispatcher = module.exports = dispatcher = {
-
-	$: {},
-
-	/**
-	* These events come from document
-	*
-	* @private
-	*/
-	events: ['mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mousewheel',
-		'click', 'dblclick', 'change', 'keydown', 'keyup', 'keypress', 'input',
-		'paste', 'copy', 'cut', 'webkitTransitionEnd', 'transitionend', 'webkitAnimationEnd', 'animationend',
-		'webkitAnimationStart', 'animationstart', 'webkitAnimationIteration', 'animationiteration'],
-
-	/**
-	* These events come from window
-	*
-	* @private
-	*/
-	windowEvents: ['resize', 'load', 'unload', 'message', 'hashchange', 'popstate', 'focus', 'blur'],
-
-	/**
-	* Feature plugins (aka filters)
-	*
-	* @private
-	*/
-	features: [],
-
-	/**
-	* @private
-	*/
-	connect: function() {
-		var d = dispatcher, i, n;
-		for (i=0; (n=d.events[i]); i++) {
-			d.listen(document, n);
-		}
-		for (i=0; (n=d.windowEvents[i]); i++) {
-			// Chrome Packaged Apps don't like "unload"
-			if(n === 'unload' &&
-				(typeof global.chrome === 'object') &&
-				global.chrome.app) {
-				continue;
-			}
-
-			d.listen(window, n);
-		}
-	},
-
-	/**
-	* @private
-	*/
-	listen: function(inListener, inEventName, inHandler) {
-		inListener.addEventListener(inEventName, inHandler || dispatch, false);
-	},
-
-	/**
-	* @private
-	*/
-	stopListening: function(inListener, inEventName, inHandler) {
-		inListener.removeEventListener(inEventName, inHandler || dispatch, false);
-	},
-
-	/**
-	* Fires an event for Enyo to listen for.
-	*
-	* @private
-	*/
-	dispatch: function(e) {
-		// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
-		var c = this.findDispatchTarget(e.target) || this.findDefaultTarget();
-		// Cache the original target
-		e.dispatchTarget = c;
-		// support pluggable features return true to abort immediately or set e.preventDispatch to avoid processing.
-		for (var i=0, fn; (fn=this.features[i]); i++) {
-			if (fn.call(this, e) === true) {
-				return;
-			}
-		}
-		if (c && !e.preventDispatch) {
-			return this.dispatchBubble(e, c);
-		}
-	},
-
-	/**
-	* Takes an event target and finds the corresponding Enyo control.
-	*
-	* @private
-	*/
-	findDispatchTarget: function(inNode) {
-		var t, n = inNode;
-		// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context"
-		// which appears to happen for scrollbar nodes in particular. It's unclear why those nodes are valid targets if
-		// it is illegal to interrogate them. Would like to trap the bad nodes explicitly rather than using an exception block.
-		try {
-			while (n) {
-				if ((t = this.$[n.id])) {
-					// there could be multiple nodes with this id, the relevant node for this event is n
-					// we don't push this directly to t.node because sometimes we are just asking what
-					// the target 'would be' (aka, calling findDispatchTarget from handleMouseOverOut)
-					t.eventNode = n;
-					break;
-				}
-				n = n.parentNode;
-			}
-		} catch(x) {
-			logger.log(x, n);
-		}
-		return t;
-	},
-
-	/**
-	* Returns the default Enyo control for events.
-	*
-	* @private
-	*/
-	findDefaultTarget: function() {
-		return master;
-	},
-
-	/**
-	* @private
-	*/
-	dispatchBubble: function(e, c) {
-		var type = e.type;
-		type = e.customEvent ? type : 'on' + type;
-		return c.bubble(type, e, c);
-	}
-};
-
-/**
-* Called in the context of an event.
-*
-* @name module:enyo/dispatcher.iePreventDefault
-* @static
-* @method
-* @private
-*/
-dispatcher.iePreventDefault = function() {
-	try {
-		this.returnValue = false;
-	}
-	catch(e) {
-		// do nothing
-	}
-};
-
-/**
-* @private
-*/
-function dispatch (inEvent) {
-	return dispatcher.dispatch(inEvent);
-}
-
-/**
-* @name module:enyo/dispatcher.bubble
-* @static
-* @method
-* @private
-*/
-dispatcher.bubble = function(inEvent) {
-	if (inEvent) {
-		dispatcher.dispatch(inEvent);
-	}
-};
-
-// This string is set on event handlers attributes for DOM elements that
-// don't normally bubble (like onscroll) so that they can participate in the
-// Enyo event system.
-dispatcher.bubbler = 'enyo.bubble(arguments[0])';
-
-// The code below helps make Enyo compatible with Google Packaged Apps
-// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
-// which, among other things, forbids the use of inline scripts.
-// We replace online scripting with equivalent means, leaving dispatcher.bubbler
-// for backward compatibility.
-(function() {
-	var bubbleUp = function() {
-		dispatcher.bubble(arguments[0]);
-	};
-
-	/**
-	* Makes given events bubble on a specified Enyo control.
-	*
-	* @name: module:enyo/dispatcher.makeBubble
-	* @method
-	* @private
-	*/
-	dispatcher.makeBubble = function() {
-		var args = Array.prototype.slice.call(arguments, 0),
-			control = args.shift();
-
-		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
-			utils.forEach(args, function(event) {
-				if(this.hasNode()) {
-					dispatcher.listen(this.node, event, bubbleUp);
-				}
-			}, control);
-		}
-	};
-
-	/**
-	* Removes the event listening and bubbling initiated by
-	* [makeBubble()]{@link module:enyo/dispatcher.makeBubble} on a specific control.
-	*
-	* @name: module:enyo/dispatcher.unmakeBubble
-	* @method
-	* @private
-	*/
-	dispatcher.unmakeBubble = function() {
-		var args = Array.prototype.slice.call(arguments, 0),
-			control = args.shift();
-
-		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
-			utils.forEach(args, function(event) {
-				if(this.hasNode()) {
-					dispatcher.stopListening(this.node, event, bubbleUp);
-				}
-			}, control);
-		}
-	};
-})();
-
-/**
-* @private
-*/
-// FIXME: we need to create and initialize dispatcher someplace else to allow overrides
-Dom.requiresWindow(dispatcher.connect);
-
-/**
-* Generates a tapped event for a raw-click event.
-*
-* @private
-*/
-dispatcher.features.push(
-	function (e) {
-		if ('click' === e.type) {
-			if (e.clientX === 0 && e.clientY === 0 && !e.detail) {
-				// this allows the click to dispatch as well
-				// but note the tap event will fire first
-				var cp = utils.clone(e);
-				cp.type = 'tap';
-				cp.preventDefault = utils.nop;
-				dispatcher.dispatch(cp);
-			}
-		}
-	}
-);
-
-/**
-* Instead of having multiple `features` pushed and handled in separate methods
-* for these events, we handle them uniformly here to expose the last known
-* interaction coordinates as accurately as possible.
-*
-* @private
-*/
-var _xy = {};
-dispatcher.features.push(
-	function (e) {
-		if (
-			(e.type == 'mousemove')  ||
-			(e.type == 'tap')        ||
-			(e.type == 'click')      ||
-			(e.type == 'touchmove')
-		) {
-			var evt = (e.type == 'touchmove') ? e.touches[0] : e;
-			_xy.clientX = evt.clientX;
-			_xy.clientY = evt.clientY;
-			// note only ie8 does not support pageX/pageY
-			_xy.pageX   = evt.pageX;
-			_xy.pageY   = evt.pageY;
-			// note ie8 and opera report these values incorrectly
-			_xy.screenX = evt.screenX;
-			_xy.screenY = evt.screenY;
-		}
-	}
-);
-
-/**
-* Retrieves the last known coordinates of the cursor or user-interaction point
-* in touch environments. Returns an immutable object with the `clientX`,
-* `clientY`, `pageX`, `pageY`, `screenX`, and `screenY` properties. It is
-* important to note that IE8 and Opera have improper reporting for the
-* `screenX` and `screenY` properties (they both use CSS pixels as opposed to
-* device pixels).
-*
-* @returns {module:enyo/dispatcher~CursorCoordinates} An [object]{@glossary Object} describing the
-*	the last known coordinates of the cursor or user-interaction point in touch environments.
-* @public
-*/
-dispatcher.getPosition = function () {
-	return utils.clone(_xy);
-};
-
-
-/**
-* Key mapping feature: Adds a `keySymbol` property to key [events]{@glossary event},
-* based on a global key mapping. Use
-* [registerKeyMap()]{@link module:enyo/dispatcher.registerKeyMap} to add
-* keyCode-to-keySymbol mappings via a simple hash. This method may be called
-* multiple times from different libraries to mix different maps into the global
-* mapping table; if conflicts arise, the last-in wins.
-*
-* ```
-* dispatcher.registerKeyMap({
-* 	415 : 'play',
-* 	413 : 'stop',
-* 	19  : 'pause',
-* 	412 : 'rewind',
-* 	417 : 'fastforward'
-* });
-* ```
-*
-* @private
-*/
-dispatcher.features.push(function(e) {
-	if ((e.type === 'keydown') || (e.type === 'keyup') || (e.type === 'keypress')) {
-		e.keySymbol = this.keyMap[e.keyCode];
-		// Dispatch key events to be sent via Signals
-		var c = this.findDefaultTarget();
-		if (e.dispatchTarget !== c) {
-			this.dispatchBubble(e, c);
-		}
-	}
-});
-
-utils.mixin(dispatcher, {
-	keyMap: {},
-	registerKeyMap: function(map) {
-		utils.mixin(this.keyMap, map);
-	}
-});
-
-
-/**
-* Event modal capture feature. Capture events to a specific control via
-* [capture(inControl, inShouldForward)]{@linkcode module:enyo/dispatcher.capture};
-* release events via [release()]{@link module:enyo/dispatcher.release}.
-*
-* @private
-*/
-dispatcher.features.push(function(e) {
-	if (this.captureTarget) {
-		var c = e.dispatchTarget;
-		var eventName = (e.customEvent ? '' : 'on') + e.type;
-		var handlerName = this.captureEvents[eventName];
-		var handlerScope = this.captureHandlerScope || this.captureTarget;
-		var handler = handlerName && handlerScope[handlerName];
-		var shouldCapture = handler && !(c && c.isDescendantOf && c.isDescendantOf(this.captureTarget));
-		if (shouldCapture) {
-			var c1 = e.captureTarget = this.captureTarget;
-			// NOTE: We do not want releasing capture while an event is being processed to alter
-			// the way the event propagates. Therefore decide if the event should forward
-			// before the capture target receives the event (since it may release capture).
-			e.preventDispatch = handler && handler.apply(handlerScope, [c1, e]) && !this.autoForwardEvents[e.type];
-		}
-	}
-});
-
-//
-//        NOTE: This object is a plug-in; these methods should
-//        be called on `enyo/dispatcher`, and not on the plug-in itself.
-//
-utils.mixin(dispatcher, {
-
-	/**
-	* @private
-	*/
-	autoForwardEvents: {leave: 1, resize: 1},
-
-	/**
-	* @private
-	*/
-	captures: [],
-
-	/**
-	* Captures [events]{@glossary event} for `inTarget`, where `inEvents` is specified as a
-	* hash of event names mapped to callback handler names to be called on `inTarget` (or,
-	* optionally, `inScope`). The callback is called when any of the captured events are
-	* dispatched outside of the capturing control. Returning `true` from the callback stops
-	* dispatch of the event to the original `dispatchTarget`.
-	*
-	* @private
-	*/
-	capture: function(inTarget, inEvents, inScope) {
-		var info = {target: inTarget, events: inEvents, scope: inScope};
-		this.captures.push(info);
-		this.setCaptureInfo(info);
-	},
-
-	/**
-	* Removes the specified target from the capture list.
-	*
-	* @private
-	*/
-	release: function(inTarget) {
-		for (var i = this.captures.length - 1; i >= 0; i--) {
-			if (this.captures[i].target === inTarget) {
-				this.captures.splice(i,1);
-				this.setCaptureInfo(this.captures[this.captures.length-1]);
-				break;
-			}
-		}
-	},
-
-	/**
-	* Sets the information for a captured {@glossary event}.
-	*
-	* @private
-	*/
-	setCaptureInfo: function(inInfo) {
-		this.captureTarget = inInfo && inInfo.target;
-		this.captureEvents = inInfo && inInfo.events;
-		this.captureHandlerScope = inInfo && inInfo.scope;
-	}
-});
-
-
-(function () {
-	/**
-	* Dispatcher preview feature
-	*
-	* Allows {@link module:enyo/Control~Control} ancestors of the {@glossary event} target
-	* a chance (eldest first) to react by implementing `previewDomEvent`.
-	*
-	* @todo Revisit how/if we document this
-	* @private
-	*/
-	var fn = 'previewDomEvent';
-	var preview = {
-
-		feature: function(e) {
-			preview.dispatch(e, e.dispatchTarget);
-		},
-
-		/*
-		* @returns {(Boolean|undefined)} Handlers return `true` to abort preview and prevent default
-		*	event processing.
-		*/
-		dispatch: function(evt, control) {
-			var i, l,
-			lineage = this.buildLineage(control);
-			for (i=0; (l=lineage[i]); i++) {
-				if (l[fn] && l[fn](evt) === true) {
-					evt.preventDispatch = true;
-					return;
-				}
-			}
-		},
-
-		/*
-		* We ascend, making a list of Enyo [controls]{@link module:enyo/Control~Control}.
-		*
-		* Note that a control is considered to be its own ancestor.
-		*/
-		buildLineage: function(control) {
-			var lineage = [],
-				c = control;
-			while (c) {
-				lineage.unshift(c);
-				c = c.parent;
-			}
-			return lineage;
-		}
-	};
-
-	dispatcher.features.push(preview.feature);
-})();
-
-},{'./logger':'enyo/logger','./master':'enyo/master','./utils':'enyo/utils','./dom':'enyo/dom'}],'enyo/History':[function (module,exports,global,require,request){
+},{'./kind':'enyo/kind','./utils':'enyo/utils','./master':'enyo/master','./Component':'enyo/Component'}],'enyo/History':[function (module,exports,global,require,request){
 /**
 * The enyo/History singleton is a specialized application history manager.
 * It is built on top of the standard HTML5 History API and centrally manages

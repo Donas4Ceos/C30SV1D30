@@ -80,7 +80,59 @@
 	if (entries && entries.forEach) entries.forEach(function (name) { require(name); });
 })(this, function () {
 	// this allows us to protect the scope of the modules from the wrapper/env code
-	return {'src/views/Video':[function (module,exports,global,require,request){
+	return {'src/data/VideosSource':[function (module,exports,global,require,request){
+var kind = require('enyo/kind');
+var AjaxSource = require('enyo/AjaxSource');
+var model = require('enyo/Model');
+var Collection = require('enyo/Collection');
+new AjaxSource({
+	name : 'ajax',
+});
+
+var Videos_Recientes = kind({
+	name : 'MyContactCollection',
+	kind : Collection,
+	source : 'ajax',
+	url : 'https://c3osv1d30.herokuapp.com/C305V1D30/Recientes'
+});
+
+var Videos_Buscar = kind({
+	name : 'MySearchcollection',
+	kind : Collection,
+	source : 'ajax',
+	getUrl : function() {
+		return 'https://c3osv1d30.herokuapp.com/C305V1D30/Buscar/'
+				+ this.get('buscar');
+	}
+});
+
+var masvistopost = kind({
+	name : 'masvisto',
+	kind : model,
+	source : 'ajax',
+	published : {
+		id_video : null
+	},
+	getUrl : function() {
+		return 'https://c3osv1d30.herokuapp.com/C305V1D30/MasVistos';
+	},
+	commit : function(model, opts) {
+		this.params = {
+			method : 'POST',
+			postBody : {
+				"id_video" : this.id_video
+			}
+		};
+		return this.inherited(arguments);
+	}
+});
+
+module.exports = {
+		Videos_Recientes : Videos_Recientes,
+		Videos_Buscar : Videos_Buscar,
+		Masvistopost : masvistopost
+	};
+}],'src/views/Video':[function (module,exports,global,require,request){
 var kind = require('enyo/kind');
 
 var Button = require('moonstone/Button'), ChannelInfo = require('moonstone/ChannelInfo'), Clock = require('moonstone/Clock'), Panel = require('moonstone/Panel'), ContextualPopup = require('moonstone/ContextualPopup'), ContextualPopupDecorator = require('moonstone/ContextualPopupDecorator'), IconButton = require('moonstone/IconButton'), Item = require('moonstone/Item'), Panels = require('moonstone/Panels'), ToggleItem = require('moonstone/ToggleItem'), Tooltip = require('moonstone/Tooltip'), TooltipDecorator = require('moonstone/TooltipDecorator'), VideoInfoBackground = require('moonstone/VideoInfoBackground'), VideoInfoHeader = require('moonstone/VideoInfoHeader'), VideoPlayer = require('moonstone/VideoPlayer'), Collection = require('enyo/Collection'), Control = require('enyo/Control'), Repeater = require('enyo/Repeater'), Scroller = require('moonstone/Scroller'), DataRepeater = require('enyo/DataRepeater');
@@ -88,6 +140,7 @@ var index = 0;
 var myCollectiontemporadas = null;
 var myCollectioncapitulos = null;
 var Divider = require('moonstone/Divider'), Img = require('enyo/Image'), ImageItem = require('moonstone/ImageItem'), Item = require('moonstone/Item'), ListActions = require('moonstone/ListActions'), Panels = require('moonstone/Panels'), Scroller = require('moonstone/Scroller'), Tooltip = require('moonstone/Tooltip'), TooltipDecorator = require('moonstone/TooltipDecorator');
+var VideosSource = require('../data/VideosSource');
 
 module.exports = kind({
 	name : 'moon.sample.AlwaysViewingPanelsWithVideoSample',
@@ -99,7 +152,6 @@ module.exports = kind({
 			{
 				name : 'player',
 				kind : VideoPlayer,
-				onPlaybackControlsTapped:'anteriorsiguiente',
 				src : null,
 				poster : 'src/assets/video-poster.png',
 				autoplay : true,
@@ -222,7 +274,7 @@ module.exports = kind({
 								fullBleedBackground : true
 							},
 							headerComponents : [ {
-								
+
 								name : 'img_descserie',
 								kind : ImageItem,
 								source : Img.placeholder,
@@ -252,20 +304,23 @@ module.exports = kind({
 								} ]
 							} ]
 						}, {
-							//title : 'panel_capitulos',
+							// title : 'panel_capitulos',
 							name : 'panel_capitulos',
 							headerType : 'medium',
 							headerOptions : {
 								fullBleedBackground : true
 							},
 							headerComponents : [ {
-								
+
 								name : 'img_desccapitulos',
 								kind : ImageItem,
 								source : Img.placeholder,
 								label : 'Breaking Bad'
-								//	,
-								//text : 'A struggling high school chemistry teacher who is diagnosed with inoperable lung cancer turns to a life of crime, producing and selling methamphetamine with a former student'
+							// ,
+							// text : 'A struggling high school chemistry
+							// teacher who is diagnosed with inoperable lung
+							// cancer turns to a life of crime, producing and
+							// selling methamphetamine with a former student'
 							} ],
 							autoNumber : false,
 							components : [ {
@@ -299,19 +354,19 @@ module.exports = kind({
 	}, {
 		from : "video.url_imagen",
 		to : ".$.img_descserie.source"
-	} , {
+	}, {
 		from : "video.url_imagen",
 		to : ".$.img_desccapitulos.source"
-	}
-	],
+	} ],
 	create : function() {
 		this.inherited(arguments);
+		new VideosSource.Masvistopost({id_video:this.video.get('id_video')}).commit();
 		myCollectiontemporadas = new Collection(this.video.get('temporadas'));
 		myCollectioncapitulos = new Collection(myCollectiontemporadas.at(0)
 				.get('capitulos'));
 		this.$.repeatertemporadas.set('collection', myCollectiontemporadas);
-		//this.actualizarvideo(myCollectioncapitulos.at(0).get('stream'));
 		this.actualizarvideo(myCollectioncapitulos.at(0).get('stream'));
+		 //this.actualizarvideo("https://openload.co/f/q4Ifk1_IaQk/01x01-Basura_En_La_Cajuela.mp4");
 	},
 	seleccionar : function(inSender, inEvent) {
 		if (index != inEvent.index) {
@@ -331,47 +386,36 @@ module.exports = kind({
 		this.$.player.setSrc(video);
 		this.$.player.updateSource();
 	},
-	anteriorsiguiente:function(sender,ev){
-		console.log('dude');
-	},
 	next : function(sender, ev) {
 		index = 0;
 		myCollectioncapitulos = new Collection(myCollectiontemporadas.at(
 				ev.index).get('capitulos'));
 		this.$.repeatercapitulos.set('collection', myCollectioncapitulos);
-		
-		this.$.img_desccapitulos.set('label', myCollectiontemporadas.at(ev.index)
-				.get('temporada'));
+
+		this.$.img_desccapitulos.set('label', myCollectiontemporadas.at(
+				ev.index).get('temporada'));
 		this.$.panels.next();
 		return true;
 	}
 });
 
 module.exports.badgeClasses = 'new';
-}],'src/views/Datalist':[function (module,exports,global,require,request){
-var kind = require('enyo/kind');
+},{'../data/VideosSource':'src/data/VideosSource'}],'src/views/Datalist':[function (module,exports,global,require,request){
 var kind = require('enyo/kind');
 var FittableColumns = require('layout/FittableColumns');
 
-var GridListImageItem = require('moonstone/GridListImageItem'),Marquee = require('moonstone/Marquee'),MarqueeSupport = Marquee.Support, IconButton = require('moonstone/IconButton'), InputHeader = require('moonstone/InputHeader'), ToggleButton = require('moonstone/ToggleButton'), Header = require('moonstone/Header'), Button = require('moonstone/Button'), ExpandablePicker = require('moonstone/ExpandablePicker'), NewDataList = require('moonstone/NewDataList'), Overlay = require('moonstone/Overlay'), Panel = require('moonstone/Panel'), Scroller = require('moonstone/Scroller'), Collection = require('enyo/Collection'), Control = require('enyo/Control'), Img = require('enyo/Image'), Spinner = require('moonstone/Spinner');
-var AjaxSource = require('enyo/AjaxSource');
+var GridListImageItem = require('moonstone/GridListImageItem'), Marquee = require('moonstone/Marquee'), MarqueeSupport = Marquee.Support, IconButton = require('moonstone/IconButton'), InputHeader = require('moonstone/InputHeader'), ToggleButton = require('moonstone/ToggleButton'), Header = require('moonstone/Header'), Button = require('moonstone/Button'), ExpandablePicker = require('moonstone/ExpandablePicker'), NewDataList = require('moonstone/NewDataList'), Overlay = require('moonstone/Overlay'), Panel = require('moonstone/Panel'), Scroller = require('moonstone/Scroller'), Collection = require('enyo/Collection'), Control = require('enyo/Control'), Img = require('enyo/Image'), Spinner = require('moonstone/Spinner');
+
+var VideosSource = require('../data/VideosSource');
 var Video = require('./Video');
-new AjaxSource({
-	name : 'ajax'
-});
 
-var MyContactCollection = kind({
-	name : 'MyContactCollection',
-	kind : Collection,
-	source : 'ajax',
-	url : 'https://c3osv1d30.herokuapp.com/C305V1D30/Videos'
-});
-
-var myCollection = new MyContactCollection();
+var myCollection = new VideosSource.Videos_Recientes();
+var myCollectionSearch;
 
 var ImageItem = kind({
 	kind : GridListImageItem,
 	subCaption : 'Sub Caption',
+	ontap : 'itemSelected',
 	// mixins: [Overlay.Selection],
 	bindings : [ {
 		from : 'model.id_Menu',
@@ -444,7 +488,7 @@ var buttonComponents = [ {
 		style : 'height: 100%; width: 100%;'
 	} ],
 	bindings : [ {
-		from : 'model.url',
+		from : 'model.url_video',
 		to : '$.img.src'
 	} ]
 } ];
@@ -461,19 +505,23 @@ module.exports = kind({
 		kind : Panel,
 		fit : true,
 		autoNumber : false,
-		headerType: 'medium',
-		headerBackgroundSrc: 'http://lorempixel.com/g/1920/360/abstract/2/',
+		headerType : 'medium',
+		headerBackgroundSrc : 'http://lorempixel.com/g/1920/360/abstract/2/',
+		// onInputHeaderChange : 'handleInput',
+		onInputHeaderInput : 'handleInput',
 		headerOptions : {
 			fullBleedBackground : true,
 			inputMode : true,
+			dismissOnEnter : true,
 			placeholder : 'Buscar',
 		},
+		headerComponents : [
+		// {kind: Spinner, name: 'spinner'},
+		],
 		components : [ {
-			style : 'text-align: center',
-			components : [ {
-				kind : Spinner,
-				name : "spinner"
-			} ]
+			name : 'spinner',
+			kind : Spinner,
+			center : true
 		}, {
 			name : 'list',
 			kind : NewDataList,
@@ -482,13 +530,15 @@ module.exports = kind({
 			spacing : 20,
 			columns : 6,
 			rows : 1,
-			ontap : 'itemSelected',
 			components : imageComponents
 		} ]
 	} ],
 	bindings : [ {
-		from : ".collection.isFetching",
-		to : ".$.spinner.showing"
+		from : "collection.status",
+		to : "$.spinner.showing",
+		transform : function(value) {
+			return this.collection.isBusy();
+		}
 	}, {
 		from : 'collection',
 		to : '$.list.collection'
@@ -505,6 +555,21 @@ module.exports = kind({
 			}
 		});
 	},
+	handleInput : function(sender, ev) {
+		var busqueda = ev.originator.getValue();
+		if (busqueda != '') {
+			var myCollectionSearch = new VideosSource.Videos_Buscar({
+				buscar : ev.originator.getValue()
+			});
+			this.set('collection', myCollectionSearch.fetch());
+		} else {
+			if (this.collection && this.collection.destroy) {
+				this.collection.destroy();
+			}
+			this.set('collection', myCollection);
+		}
+		return true;
+	},
 	refreshItems : function() {
 		if (this.collection && this.collection.destroy) {
 			this.collection.destroy();
@@ -515,7 +580,228 @@ module.exports = kind({
 });
 
 module.exports.badgeClasses = 'new wip';
-},{'./Video':'src/views/Video'}],'src/views/MainView':[function (module,exports,global,require,request){
+},{'../data/VideosSource':'src/data/VideosSource','./Video':'src/views/Video'}],'src/views/lightpanel':[function (module,exports,global,require,request){
+var
+	kind = require('enyo/kind');
+
+var
+	FittableColumns = require('layout/FittableColumns');
+
+var
+	GridListImageItem = require('moonstone/GridListImageItem'),
+	Button = require('moonstone/Button'),
+	ExpandablePicker = require('moonstone/ExpandablePicker'),
+	NewDataList = require('moonstone/NewDataList'),
+	Overlay = require('moonstone/Overlay'),
+	Panel = require('moonstone/Panel'),
+	Scroller = require('moonstone/Scroller'),
+	Collection = require('enyo/Collection'),
+	Control = require('enyo/Control'),
+	Img = require('enyo/Image');
+
+var ImageItem = kind({
+	kind: GridListImageItem,
+	subCaption: 'Sub Caption',
+	mixins: [Overlay.Selection],
+	bindings: [
+		{from: 'model.text', to: 'caption'},
+		{from: 'model.subText', to: 'subCaption'},
+		{from: 'model.url', to: 'source'}
+	]
+});
+
+var NoImageItem = kind({
+	kind: ImageItem,
+	bindings: [
+		{from: 'model.bgColor', to: 'bgColor'}
+	],
+	componentOverrides: {
+		image: {kind: Control, mixins: [Overlay.Support, Overlay.Selection]}
+	},
+	imageSizingChanged: function () {},
+	bgColorChanged: function () {
+		this.$.image.applyStyle('background', this.bgColor);
+	}
+});
+
+var
+	buttonComponents = [
+		{
+			kind: Control,
+			style: 'position: absolute;',
+			bindings: [
+				{from: 'model.text', to: '$.button.content'}
+			],
+			components: [
+				{
+					kind: Button,
+					name: 'button',
+					style: 'position: relative; height: 100%; width: 100%;',
+					selectedClass: 'active'
+				}
+			]
+		}
+	],
+	imageComponents = [
+		{kind: ImageItem, style: 'position: absolute;'}
+	],
+	noImageComponents = [
+		{kind: NoImageItem, style: 'position: absolute;'}
+	],
+	plainImageComponents = [
+		{kind: Control, mixins: [Overlay.Support, Overlay.Selection], components: [
+			{name: 'img', kind: Img, style: 'height: 100%; width: 100%;'}
+		],bindings: [
+			{from: 'model.url', to: '$.img.src'}
+		]}
+	];
+
+function selectedValue (selected) {
+	return selected && selected.value;
+}
+
+module.exports = kind({
+	name: 'moon.sample.NewDataListSample',
+	kind: FittableColumns,
+	classes: 'moon enyo-fit enyo-unselectable',
+	style: 'padding: 0', // offsetting margin added by .moon
+	components: [
+		{
+			kind: Panel,
+			classes:'moon-6h',
+			title:'Menu',
+			components: [
+				{
+					kind: Scroller,
+					components: [
+						{
+							name: 'itemPicker',
+							kind: ExpandablePicker,
+							content: 'Items',
+							components: [
+								{content: 'Image Items', value: imageComponents, active: true},
+								{content: 'No-Image Items', value: noImageComponents},
+								{content: 'Plain Images', value: plainImageComponents},
+								{content: 'Buttons', value: buttonComponents}
+							]
+						},
+						{
+							name: 'directionPicker',
+							kind: ExpandablePicker,
+							content: 'Direction',
+							components: [
+								{content: 'Vertical', value: 'vertical', active: true},
+								{content: 'Horizontal', value: 'horizontal'}
+							]
+						},
+						{
+							name: 'dataTypePicker',
+							kind: ExpandablePicker,
+							content: 'Data',
+							components: [
+								{content: 'Collections/Models', value: 'EnyoData', active: true},
+								{content: 'JS Arrays/Objects', value: 'JS'}
+							]
+						},
+						{
+							name: 'selectionPicker',
+							kind: ExpandablePicker,
+							content: 'Selection',
+							components: [
+								{content: 'On', value: true},
+								{content: 'Off', value: false, active: true}
+							]
+						},
+						{
+							name: 'selectionTypePicker',
+							kind: ExpandablePicker,
+							content: 'Selection Type',
+							components: [
+								{content: 'Single', value: 'single', active: true},
+								{content: 'Multiple', value: 'multi'},
+								{content: 'Group', value: 'group'}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			kind: Panel,
+			fit: true,
+			title:'New Data List',
+			headerComponents: [
+				{kind: Button, content:'Refresh', ontap:'refreshItems'}
+			],
+			components: [
+				{
+					name: 'list',
+					kind: NewDataList,
+					minItemHeight: 270,
+					minItemWidth: 180,
+					spacing: 20,
+					columns: 6,
+					rows: 1,
+					components: imageComponents
+				}
+			]
+		}
+	],
+	bindings: [
+		{from: 'collection', to: '$.list.collection'},
+		{from: '$.itemPicker.selected', to: '$.list.components', transform: selectedValue},
+		{from: '$.directionPicker.selected', to: '$.list.direction', transform: selectedValue},
+		{from: '$.dataTypePicker.selected', to: 'dataType', transform: selectedValue},
+		{from: '$.selectionPicker.selected', to: '$.list.selection', transform: selectedValue},
+		{from: '$.selectionPicker.selected', to: '$.selectionTypePicker.showing', transform: selectedValue},
+		{from: '$.selectionTypePicker.selected', to: '$.list.selectionType', transform: selectedValue}
+	],
+	create: function () {
+		FittableColumns.prototype.create.apply(this, arguments);
+		this.refreshItems(500);
+	},
+	generateRecords: function () {
+		var records = [],
+			idx     = this.modelIndex || 0,
+			title, subTitle, color;
+		for (; records.length < 500; ++idx) {
+			title = (idx % 8 === 0) ? ' with long title' : '';
+			subTitle = (idx % 8 === 0) ? 'Lorem ipsum dolor sit amet' : 'Subtitle';
+			color = Math.floor((Math.random()*(0x1000000-0x101010))+0x101010).toString(16);
+
+			records.push({
+				selected: false,
+				text: 'Item ' + idx + title,
+				subText: subTitle,
+				// url: 'http://placehold.it/300x300/9037ab/ffffff&text=Image'
+				url: 'http://placehold.it/300x300/' + color + '/ffffff&text=Image ' + idx,
+				bgColor: '#' + color
+			});
+		}
+		// update our internal index so it will always generate unique values
+		this.modelIndex = idx;
+		return records;
+	},
+	refreshItems: function (num) {
+		var data;
+
+		num = (typeof num === 'number') ? num : 100;
+		data = this.generateRecords(num);
+
+		if (this.collection && this.collection.destroy) {
+			this.collection.destroy();
+		}
+		this.set('collection', this.dataType === 'JS' ? data : new Collection(data));
+	},
+	dataTypeChanged: function (prev) {
+		if (prev) {
+			this.refreshItems(500);
+		}
+	}
+});
+
+module.exports.badgeClasses = 'new wip';
+}],'src/views/MainView':[function (module,exports,global,require,request){
 /**
  * For simple applications, you might define all of your views in this file. For
  * more complex applications, you might choose to separate these kind
@@ -529,7 +815,31 @@ module.exports.badgeClasses = 'new wip';
 
 var kind = require('enyo/kind'), Panels = require('moonstone/Panels'), Panel = require('moonstone/Panel'), BodyText = require('moonstone/BodyText'), IconButton = require('moonstone/IconButton');
 var Datalist = require('./Datalist');
+var Control = require('enyo/Control');
+var lightpanel=require('./lightpanel');
 var CarouselArranger = require('layout/CarouselArranger');
+var Spinner = require('moonstone/Spinner');
+// var Browser = require('zombie');
+
+var controliframe=kind({
+    name: "Circle",
+    kind: Control,
+  classes: "enyo-fit",
+  components: [
+      {
+          tag: "iframe",
+          src: "https://openload.co/embed/q4Ifk1_IaQk/01x01-Basura_En_La_Cajuela.mp4",
+          attributes: {
+              allowfullscreen: ""
+          },
+          domStyles: {
+              width: "100%",
+              height: "100%"
+          }
+      }
+  ]
+});
+
 
 module.exports = kind({
 	name : 'myapp.MainView',
@@ -538,22 +848,27 @@ module.exports = kind({
 	handlers : {
 		onRequestPushPanel : 'pushPanel'
 	},
-	components : [ {
+	components : [ 
+	               {
 		kind : Panels,
-		hasCloseButton:false,
+		hasCloseButton : false,
 		arrangerKind : CarouselArranger,
 		classes : 'enyo-arranger-fit',
 		popOnBack : true,
-		components : [ {
-			kind : Datalist
+		components : [
+		{
+			//kind:controliframe
+			//kind : lightpanel,
+			kind : Datalist,
 		} ]
-	} ],
+	} 
+	               ],
 	pushPanel : function(sender, ev) {
 		this.$.panels.pushPanel(ev.panel);
 	}
 });
 
-},{'./Datalist':'src/views/Datalist'}],'src/App':[function (module,exports,global,require,request){
+},{'./Datalist':'src/views/Datalist','./lightpanel':'src/views/lightpanel'}],'src/App':[function (module,exports,global,require,request){
 /**
 	Define your enyo/Application kind in this file.
 */
