@@ -14,6 +14,16 @@ module.exports = kind({
 		video : null
 	},
 	components : [
+//			{
+//				name : "iframe",
+//				tag : "iframe",
+//				attributes : {
+//					src : "http://drive.google.com/file/d/0B-dXqW4TSyION2pwRjhfMHNZeEE/preview",
+//					height : "100%",
+//					width : "100%",
+//					frameborder : "0"
+//				}
+//			},
 			{
 				name : 'player',
 				kind : VideoPlayer,
@@ -225,13 +235,23 @@ module.exports = kind({
 	} ],
 	create : function() {
 		this.inherited(arguments);
-		new VideosSource.Masvistopost({id_video:this.video.get('id_video')}).commit();
-		myCollectiontemporadas = new Collection(this.video.get('temporadas'));
-		myCollectioncapitulos = new Collection(myCollectiontemporadas.at(0)
-				.get('capitulos'));
-		this.$.repeatertemporadas.set('collection', myCollectiontemporadas);
-		this.actualizarvideo(myCollectioncapitulos.at(0).get('stream'));
-		 //this.actualizarvideo("https://openload.co/f/q4Ifk1_IaQk/01x01-Basura_En_La_Cajuela.mp4");
+//		console.log("create");
+//		var check = 'https://docs.google.com/file/d/0BxgwXslPkkvjeWFZbXBWMzdNZFE/preview';
+//		if ((new RegExp('docs.google')).test(check)) {
+//			this.$.player.hide();
+		//} else {
+			new VideosSource.Masvistopost({
+				id_video : this.video.get('id_video')
+			}).commit();
+			myCollectiontemporadas = new Collection(this.video
+					.get('temporadas'));
+			myCollectioncapitulos = new Collection(myCollectiontemporadas.at(0)
+					.get('capitulos'));
+			this.$.repeatertemporadas.set('collection', myCollectiontemporadas);
+			this.actualizarvideo(myCollectioncapitulos.at(0).get('stream'));
+			// this.actualizarvideo("https://www.dropbox.com/s/si7bg45ixm8dn9s/01x01-Basura
+			// En La Cajuela.mp4?dl=1");
+		//}
 	},
 	seleccionar : function(inSender, inEvent) {
 		if (index != inEvent.index) {

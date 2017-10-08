@@ -62,7 +62,7 @@
   "outCssFile": "output.css",
   "outJsFile": "output.js",
   "inlineJs": true,
-  "templateIndex": "",
+  "templateIndex": "index.tpl",
   "watch": false,
   "watchPaths": [],
   "polling": false,
